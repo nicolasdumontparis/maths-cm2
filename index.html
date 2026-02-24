@@ -554,7 +554,12 @@
         });
         
         // Start the first problem
-        generateNewProblem();
+        try {
+            generateNewProblem();
+            alert('Problème chargé !');
+        } catch(e) {
+            alert('Erreur: ' + e.message);
+        }
     </script>
 </body>
 </html>
