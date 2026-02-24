@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maths CM2 - 30 minutes</title>
+    <title>Problème Maths CM2 - 30 minutes</title>
     <style>
         * {
             margin: 0;
@@ -26,32 +26,79 @@
         h1 {
             color: #ffd700;
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .subtitle {
             color: #a0a0a0;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 1.1rem;
         }
         
         .card {
             background: white;
             border-radius: 20px;
-            padding: 25px;
+            padding: 30px;
             margin-bottom: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
         
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .problem-box {
+            background: #fff8e1;
+            border: 3px solid #ffb300;
+            border-radius: 15px;
+            padding: 25px;
             margin-bottom: 20px;
+        }
+        
+        .problem-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .problem-text p {
+            margin-bottom: 15px;
+        }
+        
+        .hint {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .hint strong {
+            color: #1565c0;
+        }
+        
+        .answer-section {
+            background: #f3e5f5;
+            border: 3px solid #9c27b0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .answer-section h3 {
+            color: #7b1fa2;
+            margin-bottom: 15px;
+        }
+        
+        input[type="number"] {
+            width: 200px;
+            padding: 15px;
+            font-size: 1.3rem;
+            border: 3px solid #9c27b0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #6a1b9a;
         }
         
         button {
@@ -63,88 +110,67 @@
             cursor: pointer;
             font-size: 1.1rem;
             font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+            transition: transform 0.2s;
         }
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         
-        button.secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        button.check-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        }
+        
+        button.new-btn {
+            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
         }
         
         button.print-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
         }
         
-        .problems-list {
-            display: none;
-        }
-        
-        .problems-list.visible {
-            display: block;
-        }
-        
-        .problem {
-            background: #f8f9fa;
-            border-left: 5px solid #667eea;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 0 15px 15px 0;
-            position: relative;
-        }
-        
-        .problem-number {
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            background: #667eea;
+        .timer {
+            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
             color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 2rem;
             font-weight: bold;
-        }
-        
-        .problem-title {
-            font-weight: bold;
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-        
-        .problem-content {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        
-        .problem-answer {
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            padding: 10px 15px;
-            border-radius: 10px;
-            color: #2e7d32;
-            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
             display: inline-block;
         }
         
-        .hidden-answers .problem-answer {
-            background: #fff3e0;
-            border-color: #ff9800;
-            color: #e65100;
+        .timer-container {
+            text-align: center;
+            margin-bottom: 20px;
         }
         
-        .hidden-answers .problem-answer::before {
-            content: "👉 ";
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
         }
         
-        .stats {
+        .result.correct {
+            display: block;
+            background: #c8e6c9;
+            border: 3px solid #4caf50;
+            color: #2e7d32;
+        }
+        
+        .result.incorrect {
+            display: block;
+            background: #ffcdd2;
+            border: 3px solid #f44336;
+            color: #c62828;
+        }
+        
+        .score-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
@@ -153,261 +179,218 @@
             margin-bottom: 20px;
         }
         
-        .stats h3 {
-            margin-bottom: 10px;
+        .score-display h2 {
+            font-size: 3rem;
+            margin: 10px 0;
         }
         
-        .timer {
-            font-size: 2rem;
-            font-weight: bold;
+        .controls {
+            text-align: center;
+            margin-top: 20px;
         }
         
         @media print {
             body {
                 background: white;
-                padding: 0;
             }
             
-            .controls, .timer {
+            .timer, .controls, .answer-section, .new-btn, .print-btn {
                 display: none;
             }
             
             .card {
                 box-shadow: none;
-                page-break-inside: avoid;
-            }
-            
-            .problem {
-                page-break-inside: avoid;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧮 Maths CM2</h1>
-        <p class="subtitle">Problèmes pour 30 minutes de travail</p>
+        <h1>🧮 Problème Maths CM2</h1>
+        <p class="subtitle">30 minutes de réflexion !</p>
         
-        <div class="stats">
-            <h3>⏱️ Durée estimée : 30 minutes</h3>
+        <div class="timer-container">
             <div class="timer" id="timer">30:00</div>
-            <p id="problemCount">12 problèmes</p>
-        </div>
-        
-        <div class="controls">
-            <button onclick="generateProblems()">🔄 Générer de nouveaux problèmes</button>
-            <button class="secondary" onclick="toggleAnswers()">👁️ Afficher/Masquer les réponses</button>
-            <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
         </div>
         
         <div class="card">
-            <div class="problems-list" id="problemsList"></div>
+            <div class="problem-box">
+                <div class="problem-text" id="problemText">
+                    Chargement du problème...
+                </div>
+            </div>
+        </div>
+        
+        <div class="card answer-section">
+            <h3>📝 Ta réponse</h3>
+            <input type="number" id="userAnswer" placeholder="Ton résultat">
+            <br><br>
+            <button class="check-btn" onclick="checkAnswer()">✓ Vérifier</button>
+            
+            <div class="result" id="result"></div>
+        </div>
+        
+        <div class="score-display" id="scoreDisplay" style="display: none;">
+            <div>Ton score</div>
+            <h2 id="scoreText">0/10</h2>
+        </div>
+        
+        <div class="controls">
+            <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
+            <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
         </div>
     </div>
 
     <script>
-        const operations = [
-            {
-                title: "Addition",
-                generate: () => {
-                    const a = Math.floor(Math.random() * 9000) + 1000;
-                    const b = Math.floor(Math.random() * 9000) + 1000;
-                    return {
-                        content: `${a.toLocaleString()} + ${b.toLocaleString()} = ?`,
-                        answer: (a + b).toLocaleString()
-                    };
-                }
-            },
-            {
-                title: "Soustraction",
-                generate: () => {
-                    const a = Math.floor(Math.random() * 9000) + 5000;
-                    const b = Math.floor(Math.random() * 4000) + 1000;
-                    return {
-                        content: `${a.toLocaleString()} - ${b.toLocaleString()} = ?`,
-                        answer: (a - b).toLocaleString()
-                    };
-                }
-            },
-            {
-                title: "Multiplication",
-                generate: () => {
-                    const a = Math.floor(Math.random() * 90) + 10;
-                    const b = Math.floor(Math.random() * 90) + 10;
-                    return {
-                        content: `${a} × ${b} = ?`,
-                        answer: (a * b).toLocaleString()
-                    };
-                }
-            },
-            {
-                title: "Division",
-                generate: () => {
-                    const b = Math.floor(Math.random() * 12) + 2;
-                    const q = Math.floor(Math.random() * 40) + 5;
-                    const a = b * q;
-                    return {
-                        content: `${a.toLocaleString()} ÷ ${b} = ?`,
-                        answer: q.toLocaleString()
-                    };
-                }
-            }
-        ];
-        
         const problems = [
             {
-                title: "Problème d'achat",
-                generate: () => {
-                    const prix = Math.floor(Math.random() * 50) + 10;
-                    const qte = Math.floor(Math.random() * 8) + 2;
-                    const articles = ["cahiers", "stylos", "livres", "crayons", "gommes"];
-                    const article = articles[Math.floor(Math.random() * articles.length)];
-                    return {
-                        content: `Léa achète ${qte} ${article} à ${prix}€ l'un. Combien paie-t-elle ?`,
-                        answer: (prix * qte) + "€"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille est composée de 4 personnes (les parents et 2 enfants).</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. Ils préparent un gâteau qui nécessite 250g de farine, 200g de sucre et 150g de beurre. Mais la recette est pour 6 personnes. <strong>Quelle quantité de chaque ingrédient faut-il pour 12 personnes ?</strong></p>
+                <p>2. Chaque invité mange 2 parts de gâteau. <strong>Combien de parts au total sont mangées ?</strong></p>
+                <p>3. Le gâteau coûte 15€ à faire. <strong>Combien paye chaque personne (invités + famille) ?</strong></p>
+                <p>4. Pour drink, ils achètent des bouteilles de soda à 2€50 chacune. Il en faut 1 pour 3 personnes. <strong>Combien coûtent les sodas ?</strong></p>
+                <p>5. Ils offrent 1 balloon à chaque enfant invité. Il y a 5 enfants parmi les 8 invités. <strong>Combien coûtent les ballons à 1€ le ballon ?</strong></p>
+                <p><em>Note : Réponds à toutes les questions et donne le TOTAL de la question 5 comme réponse finale.</em></p>`,
+                answer: 5
             },
             {
-                title: "Problème de distance",
-                generate: () => {
-                    const vitesse = Math.floor(Math.random() * 60) + 40;
-                    const temps = Math.floor(Math.random() * 3) + 2;
-                    return {
-                        content: `Une voiture roule à ${vitesse} km/h pendant ${temps} heures. Quelle distance parcourt-elle ?`,
-                        answer: (vitesse * temps) + " km"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Luc fait un voyage en train. Le train part à 8h15 et arrive à 14h45.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. <strong>Quelle est la durée du voyage ?</strong></p>
+                <p>2. Le billet coûte 45€ pour un adulte et demi-tarif pour un enfant. Luc voyage avec ses 2 enfants. <strong>Combien payent-ils au total ?</strong></p>
+                <p>3. Dans le train, il y a 6 wagons de 50 places chacun. À la première gare, 120 personnes montent. <strong>Combien de places restent libres ?</strong></p>
+                <p>4. À la deuxième gare, 35 personnes descendent et 28 montent. <strong>Combien y a-t-il de voyageurs dans le train ?</strong></p>
+                <p>5. Luc achète un journal à 3€50 et un café à 2€50. <strong>Combien lui rendent-ils s'il paye avec un billet de 20€ ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 14
             },
             {
-                title: "Problème de partage",
-                generate: () => {
-                    const total = (Math.floor(Math.random() * 20) + 10) * 6;
-                    const parts = Math.floor(Math.random() * 5) + 3;
-                    return {
-                        content: `On distribue ${total} bonbons à ${parts} enfants de manière égale. Combien de bonbons reçoit chaque enfant ?`,
-                        answer: (total / parts) + " bonbons"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Une超市 fait des soldes. Un livre coûte 25€, un jeu vidéo coûte 60€ et un jouet coûte 15€.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. Marie achète 3 livres et 2 jeux vidéo. <strong>Combien paye-t-elle ?</strong></p>
+                <p>2. Pendant les soldes, on fait -20% sur les livres. <strong>Combien coûtent maintenant les 3 livres ?</strong></p>
+                <p>3. Pierre a 100€ et veut acheter 4 jouets. <strong>Combien lui manque-t-il ?</strong></p>
+                <p>4. Avec la réduction des soldes, Marie économise 15€ sur les livres. <strong>Combien a-t-elle payée au total (livres+soldés + jeux) ?</strong></p>
+                <p>5. Si 5 amis mettent chacun 12€ pour acheter un cadeau à 55€, <strong>combien reste-t-il d'argent ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 5
             },
             {
-                title: "Problème de temps",
-                generate: () => {
-                    const debut = Math.floor(Math.random() * 8) + 8;
-                    const duree = Math.floor(Math.random() * 180) + 30;
-                    const fin = debut * 60 + duree;
-                    const h = Math.floor(fin / 60);
-                    const m = fin % 60;
-                    return {
-                        content: `Un train part à ${debut}h et le voyage dure ${duree} minutes. À quelle heure arrive-t-il ?`,
-                        answer: `${h}h${m.toString().padStart(2, '0')}`
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Un fermier a 3 fermes. Dans la première, il a 45 moutons. Dans la deuxième, il en a le double de la première. Dans la troisième, il a 30 moutons de moins que la deuxième.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. <strong>Combien y a-t-il de moutons dans la deuxième ferme ?</strong></p>
+                <p>2. <strong>Combien y a-t-il de moutons dans la troisième ferme ?</strong></p>
+                <p>3. <strong>Combien y a-t-il de moutons au total ?</strong></p>
+                <p>4. Il vend 60 moutons. <strong>Combien lui en reste-t-il ?</strong></p>
+                <p>5. Chaque mouton vaut 80€. <strong>Combien d'argent reçoit-il en vendant ses 60 moutons ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 4800
             },
             {
-                title: "Problème d'argent",
-                generate: () => {
-                    const avoir = Math.floor(Math.random() * 100) + 50;
-                    const depense = Math.floor(Math.random() * 30) + 10;
-                    return {
-                        content: `Thomas a ${avoir}€ et il dépense ${depense}€. Combien lui reste-t-il ?`,
-                        answer: (avoir - depense) + "€"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Une classe de CM2 fait un voyage. Il y a 24 élèves et 3 maîtres/maitresses.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. Le car a 60 places. <strong>Combien de places restent libres ?</strong></p>
+                <p>2. Le trajet aller dure 2h15. <strong>Combien de minutes est-ce ?</strong></p>
+                <p>3. Le prix du voyage est de 35€ par élève. <strong>Combien paient les 24 élèves ?</strong></p>
+                <p>4. Les maîtres ne payent pas. <strong>Quelle est la recette totale ?</strong></p>
+                <p>5. L'école reçoit une subvention de 200€ et une autre de 150€. <strong>Combien manque-t-il encore pour payer le voyage des élèves ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 390
             },
             {
-                title: "Problème decollection",
-                generate: () => {
-                    const a = Math.floor(Math.random() * 500) + 100;
-                    const b = Math.floor(Math.random() * 300) + 50;
-                    return {
-                        content: `Marc a ${a} timbres dans son album. Il en reçoit ${b} de son grand-père. Combien a-t-il de timbres maintenant ?`,
-                        answer: (a + b) + " timbres"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Sophie collectionne des cartes Pokemon. Elle en a déjà 125.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. Elle achète un paquet de 10 cartes par semaine pendant 4 semaines. <strong>Combien de cartes a-t-elle maintenant ?</strong></p>
+                <p>2. Elle échange 25 cartes contre 1 carte rare. <strong>Combien de cartes lui reste-t-il ?</strong></p>
+                <p>3. Elle revend ses cartes doubles. Elle en vend 30 à 2€ chacune. <strong>Combien d'argent gagne-t-elle ?</strong></p>
+                <p>4. Elle achète 3 albums à 12€ chacun. <strong>Combien a-t-elle dépensé en tout (y compris les albums) ?</strong></p>
+                <p>5. Il lui reste 155€ de ses économies. <strong>Combien avait-elle au départ ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 233
             },
             {
-                title: "Problème de périmètre",
-                generate: () => {
-                    const c = Math.floor(Math.random() * 15) + 5;
-                    return {
-                        content: `Un carré mesure ${c} cm de côté. Calcule son périmètre.`,
-                        answer: (c * 4) + " cm"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Un maraîcher vend ses légumes au marché. Il apporte 100 kg de tomates à 3€ le kg.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. <strong>Combien vaut sa récolte de tomates ?</strong></p>
+                <p>2. Il vend aussi 50 kg de pommes de terre à 2€ le kg. <strong>Combien vaut la récolte de pommes de terre ?</strong></p>
+                <p>3. <strong>Combien a-t-il gagné au total ?</strong></p>
+                <p>4. Il doit payer 20€ pour l'emplacement du marché. <strong>Combien lui reste-t-il ?</strong></p>
+                <p>5. Il verse cet argent sur son compte qui contenait déjà 450€. <strong>Quel est le nouveau solde ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 720
             },
             {
-                title: "Problème de surface",
-                generate: () => {
-                    const L = Math.floor(Math.random() * 10) + 5;
-                    const l = Math.floor(Math.random() * 6) + 3;
-                    return {
-                        content: `Un rectangle mesure ${L} cm de longueur et ${l} cm de largeur. Calcule son aire.`,
-                        answer: (L * l) + " cm²"
-                    };
-                }
+                text: `<p><strong>Contexte :</strong> Un兔子 a 3 portées par an. Chaque portée compte en moyenne 6 lapereaux.</p>
+                <p><strong>Questions :</strong></p>
+                <p>1. <strong>Combien de lapereaux naissent par an ?</strong></p>
+                <p>2. Si la moitié sont des femelles, <strong>combien de femelles ?</strong></p>
+                <p>3. Chaque lapereau mange 200g de nourriture par jour. <strong>Combien de kg mangent-ils en une semaine ?</strong></p>
+                <p>4. La nourriture coûte 2€ le kg. <strong>Combien coûte la nourriture par semaine ?</strong></p>
+                <p>5. Ils vendent 30 lapereaux à 15€ chacun. <strong>Combien d'argent reçoivent-ils ?</strong></p>
+                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
+                answer: 450
             }
         ];
         
-        let currentProblems = [];
+        let currentProblem = null;
+        let timerStarted = false;
         
-        function generateProblems() {
-            currentProblems = [];
-            const list = document.getElementById('problemsList');
-            list.innerHTML = '';
-            list.classList.add('visible');
+        function generateNewProblem() {
+            currentProblem = problems[Math.floor(Math.random() * problems.length)];
+            document.getElementById('problemText').innerHTML = currentProblem.text;
+            document.getElementById('userAnswer').value = '';
+            document.getElementById('result').className = 'result';
+            document.getElementById('result').textContent = '';
+            document.getElementById('scoreDisplay').style.display = 'none';
             
-            // Generate 6 operations
-            for (let i = 0; i < 6; i++) {
-                const op = operations[Math.floor(Math.random() * operations.length)];
-                const p = op.generate();
-                currentProblems.push({ title: op.title, ...p });
+            // Reset timer
+            timeLeft = 30 * 60;
+            if (!timerStarted) {
+                startTimer();
+                timerStarted = true;
             }
-            
-            // Generate 6 word problems
-            for (let i = 0; i < 6; i++) {
-                const pb = problems[Math.floor(Math.random() * problems.length)];
-                const p = pb.generate();
-                currentProblems.push({ title: pb.title, ...p });
-            }
-            
-            // Shuffle
-            currentProblems.sort(() => Math.random() - 0.5);
-            
-            // Render
-            currentProblems.forEach((p, i) => {
-                list.innerHTML += `
-                    <div class="problem">
-                        <div class="problem-number">${i + 1}</div>
-                        <div class="problem-title">${p.title}</div>
-                        <div class="problem-content">${p.content}</div>
-                        <div class="problem-answer">${p.answer}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('problemCount').textContent = currentProblems.length + " problèmes";
         }
         
-        function toggleAnswers() {
-            const list = document.getElementById('problemsList');
-            list.classList.toggle('hidden-answers');
+        function checkAnswer() {
+            const userAnswer = parseFloat(document.getElementById('userAnswer').value);
+            const resultDiv = document.getElementById('result');
+            const scoreDiv = document.getElementById('scoreDisplay');
+            
+            if (isNaN(userAnswer)) {
+                alert('Veuillez entrer un nombre !');
+                return;
+            }
+            
+            if (userAnswer === currentProblem.answer) {
+                resultDiv.className = 'result correct';
+                resultDiv.innerHTML = `✅ <strong>Bravo ! C'est correct !</strong><br><br>La réponse était bien ${currentProblem.answer}`;
+                document.getElementById('scoreText').textContent = '10/10';
+                scoreDiv.style.display = 'block';
+            } else {
+                resultDiv.className = 'result incorrect';
+                resultDiv.innerHTML = `❌ <strong>Désolé, ce n'est pas correct.</strong><br><br>Réessaie !`;
+                document.getElementById('scoreText').textContent = '0/10';
+                scoreDiv.style.display = 'block';
+            }
         }
         
-        // Start timer
         let timeLeft = 30 * 60;
-        setInterval(() => {
-            if (timeLeft > 0) {
-                timeLeft--;
-                const m = Math.floor(timeLeft / 60);
-                const s = timeLeft % 60;
-                document.getElementById('timer').textContent = 
-                    `${m}:${s.toString().padStart(2, '0')}`;
-            }
-        }, 1000);
         
-        // Generate on load
-        generateProblems();
+        function startTimer() {
+            setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60);
+                    const s = timeLeft % 60;
+                    document.getElementById('timer').textContent = 
+                        `${m}:${s.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        
+        // Start
+        generateNewProblem();
     </script>
 </body>
 </html>
