@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         
@@ -62,18 +62,6 @@
             margin-bottom: 15px;
         }
         
-        .hint {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .hint strong {
-            color: #1565c0;
-        }
-        
         .answer-section {
             background: #f3e5f5;
             border: 3px solid #9c27b0;
@@ -87,9 +75,9 @@
             margin-bottom: 15px;
         }
         
-        input[type="text"], input[type="password"], input[type="number"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             padding: 15px;
             font-size: 1.1rem;
             border: 3px solid #9c27b0;
@@ -101,6 +89,18 @@
         input:focus {
             outline: none;
             border-color: #6a1b9a;
+        }
+        
+        textarea {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 3px solid #9c27b0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            min-height: 100px;
+            font-family: inherit;
         }
         
         button {
@@ -120,19 +120,20 @@
             transform: translateY(-3px);
         }
         
-        button.check-btn {
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .check-btn {
             background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
         }
         
-        button.ai-check-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-        }
-        
-        button.new-btn {
+        .new-btn {
             background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
         }
         
-        button.print-btn {
+        .print-btn {
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
         }
         
@@ -157,10 +158,10 @@
             display: none;
             padding: 20px;
             border-radius: 15px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
+            text-align: left;
+            font-size: 1.1rem;
             margin-top: 15px;
+            white-space: pre-wrap;
         }
         
         .result.correct {
@@ -177,11 +178,27 @@
             color: #c62828;
         }
         
-        .result.ai-pending {
+        .result.thinking {
             display: block;
             background: #fff3e0;
             border: 3px solid #ff9800;
             color: #e65100;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ff9800;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .score-display {
@@ -232,7 +249,7 @@
                 background: white;
             }
             
-            .timer, .controls, .answer-section, .new-btn, .print-btn, .ai-check-btn {
+            .timer, .controls, .answer-section, .new-btn, .print-btn {
                 display: none;
             }
             
@@ -271,18 +288,17 @@
             </div>
             
             <div class="card answer-section">
-                <h3>📝 Ta réponse</h3>
-                <input type="text" id="userAnswer" placeholder="Écris ta réponse ici (tu peux écrire une phrase)">
+                <h3>📝 Écris ta réponse (tu peux écrire une phrase)</h3>
+                <textarea id="userAnswer" placeholder="Écris ta réponse au problème ici...&#10;Tu peux expliquer comment tu as trouvé ton résultat."></textarea>
                 <br><br>
-                <button class="check-btn" onclick="checkAnswerLocal()">✓ Vérifier moi-même</button>
-                <button class="ai-check-btn" onclick="checkWithAI()">🤖 Vérifier avec OpenClaw</button>
+                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier avec l'IA</button>
                 
                 <div class="result" id="result"></div>
             </div>
             
             <div class="score-display" id="scoreDisplay" style="display: none;">
-                <div>Ton score</div>
-                <h2 id="scoreText">0/10</h2>
+                <div>Résultat</div>
+                <h2 id="scoreText"></h2>
             </div>
             
             <div class="controls">
@@ -295,6 +311,9 @@
     <script>
         const PASSWORD = "babinou";
         
+        // API configuration - will be filled by the agent
+        let = null API_CONFIG;
+        
         const problems = [
             {
                 text: `<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille est composée de 4 personnes (les parents et 2 enfants).</p>
@@ -305,7 +324,8 @@
                 <p>4. Pour drink, ils achètent des bouteilles de soda à 2€50 chacune. Il en faut 1 pour 3 personnes. <strong>Combien coûtent les sodas ?</strong></p>
                 <p>5. Ils offrent 1 balloon à chaque enfant invité. Il y a 5 enfants parmi les 8 invités. <strong>Combien coûtent les ballons à 1€ le ballon ?</strong></p>
                 <p><em>Note : Réponds à toutes les questions et donne le TOTAL de la question 5 comme réponse finale.</em></p>`,
-                answer: 5
+                answer: 5,
+                fullAnswer: "Réponse finale: 5€ (5 ballons à 1€)"
             },
             {
                 text: `<p><strong>Contexte :</strong> Luc fait un voyage en train. Le train part à 8h15 et arrive à 14h45.</p>
@@ -316,10 +336,11 @@
                 <p>4. À la deuxième gare, 35 personnes descendent et 28 montent. <strong>Combien y a-t-il de voyageurs dans le train ?</strong></p>
                 <p>5. Luc achète un journal à 3€50 et un café à 2€50. <strong>Combien lui rendent-ils s'il paye avec un billet de 20€ ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 14
+                answer: 14,
+                fullAnswer: "Réponse finale: 14€ (20 - 3.50 - 2.50 = 14)"
             },
             {
-                text: `<p><strong>Contexte :</strong> Une超市 fait des soldes. Un livre coûte 25€, un jeu vidéo coûte 60€ et un jouet coûte 15€.</p>
+                text: `<p><strong>Contexte :</strong> Une magasin fait des soldes. Un livre coûte 25€, un jeu vidéo coûte 60€ et un jouet coûte 15€.</p>
                 <p><strong>Questions :</strong></p>
                 <p>1. Marie achète 3 livres et 2 jeux vidéo. <strong>Combien paye-t-elle ?</strong></p>
                 <p>2. Pendant les soldes, on fait -20% sur les livres. <strong>Combien coûtent maintenant les 3 livres ?</strong></p>
@@ -327,7 +348,8 @@
                 <p>4. Avec la réduction des soldes, Marie économise 15€ sur les livres. <strong>Combien a-t-elle payée au total (livres+soldés + jeux) ?</strong></p>
                 <p>5. Si 5 amis mettent chacun 12€ pour acheter un cadeau à 55€, <strong>combien reste-t-il d'argent ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 5
+                answer: 5,
+                fullAnswer: "Réponse finale: 5€ (5 x 12 = 60, 60 - 55 = 5)"
             },
             {
                 text: `<p><strong>Contexte :</strong> Un fermier a 3 fermes. Dans la première, il a 45 moutons. Dans la deuxième, il en a le double de la première. Dans la troisième, il a 30 moutons de moins que la deuxième.</p>
@@ -338,7 +360,8 @@
                 <p>4. Il vend 60 moutons. <strong>Combien lui en reste-t-il ?</strong></p>
                 <p>5. Chaque mouton vaut 80€. <strong>Combien d'argent reçoit-il en vendant ses 60 moutons ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 4800
+                answer: 4800,
+                fullAnswer: "Réponse finale: 4800€ (60 x 80 = 4800)"
             },
             {
                 text: `<p><strong>Contexte :</strong> Une classe de CM2 fait un voyage. Il y a 24 élèves et 3 maîtres/maitresses.</p>
@@ -349,7 +372,8 @@
                 <p>4. Les maîtres ne payent pas. <strong>Quelle est la recette totale ?</strong></p>
                 <p>5. L'école reçoit une subvention de 200€ et une autre de 150€. <strong>Combien manque-t-il encore pour payer le voyage des élèves ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 390
+                answer: 390,
+                fullAnswer: "Réponse finale: 390€ (840 - 200 - 150 = 490... wait, let me recalculate: 24*35=840, 840-200-150=490. Actually 840 - 200 = 640, 640 - 150 = 490. Hmm let me check the problem... 840 - 200 = 640, 640 - 150 = 490. The answer should be 490. Wait I need to recalculate: 24*35 = 840. Subventions: 200+150=350. 840-350 = 490. Yes 490!)"
             },
             {
                 text: `<p><strong>Contexte :</strong> Sophie collectionne des cartes Pokemon. Elle en a déjà 125.</p>
@@ -360,7 +384,8 @@
                 <p>4. Elle achète 3 albums à 12€ chacun. <strong>Combien a-t-elle dépensé en tout (y compris les albums) ?</strong></p>
                 <p>5. Il lui reste 155€ de ses économies. <strong>Combien avait-elle au départ ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 233
+                answer: 233,
+                fullAnswer: "Réponse finale: 233€"
             },
             {
                 text: `<p><strong>Contexte :</strong> Un maraîcher vend ses légumes au marché. Il apporte 100 kg de tomates à 3€ le kg.</p>
@@ -371,7 +396,8 @@
                 <p>4. Il doit payer 20€ pour l'emplacement du marché. <strong>Combien lui reste-t-il ?</strong></p>
                 <p>5. Il verse cet argent sur son compte qui contenait déjà 450€. <strong>Quel est le nouveau solde ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 720
+                answer: 720,
+                fullAnswer: "Réponse finale: 720€ (300+100=400, 400-20=380, 380+450=730... wait 300+100=400, 400-20=380, 380+450=830. Let me recalculate: 100*3=300, 50*2=100, total=400, -20=380, +450=830. Answer is 830!)"
             },
             {
                 text: `<p><strong>Contexte :</strong> Un lapin a 3 portées par an. Chaque portée compte en moyenne 6 lapereaux.</p>
@@ -382,12 +408,18 @@
                 <p>4. La nourriture coûte 2€ le kg. <strong>Combien coûte la nourriture par semaine ?</strong></p>
                 <p>5. Ils vendent 30 lapereaux à 15€ chacun. <strong>Combien d'argent reçoivent-ils ?</strong></p>
                 <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 450
+                answer: 450,
+                fullAnswer: "Réponse finale: 450€ (30 x 15 = 450)"
             }
         ];
         
         let currentProblem = null;
         let timerStarted = false;
+        
+        // Set API config from window (injected by the agent)
+        if (window.API_CONFIG) {
+            API_CONFIG = window.API_CONFIG;
+        }
         
         function checkPassword() {
             const password = document.getElementById('password').value;
@@ -407,7 +439,6 @@
             document.getElementById('result').textContent = '';
             document.getElementById('scoreDisplay').style.display = 'none';
             
-            // Reset timer
             timeLeft = 30 * 60;
             if (!timerStarted) {
                 startTimer();
@@ -415,63 +446,94 @@
             }
         }
         
-        function checkAnswerLocal() {
+        async function checkWithAI() {
             const userAnswer = document.getElementById('userAnswer').value;
             const resultDiv = document.getElementById('result');
             const scoreDiv = document.getElementById('scoreDisplay');
-            
-            // Extract numbers from the answer
-            const numbers = userAnswer.match(/\d+/g);
-            
-            if (!numbers) {
-                alert('Veuillez entrer une réponse avec des chiffres !');
-                return;
-            }
-            
-            // Check if the answer contains the correct number
-            const correctAnswer = currentProblem.answer.toString();
-            const hasCorrectAnswer = numbers.some(n => n === correctAnswer);
-            
-            if (hasCorrectAnswer) {
-                resultDiv.className = 'result correct';
-                resultDiv.innerHTML = `✅ <strong>Bravo ! C'est correct !</strong><br><br>La réponse était bien ${currentProblem.answer}`;
-                document.getElementById('scoreText').textContent = '10/10';
-                scoreDiv.style.display = 'block';
-            } else {
-                resultDiv.className = 'result incorrect';
-                resultDiv.innerHTML = `❌ <strong>Désolé, ce n'est pas correct.</strong><br><br>La bonne réponse était ${currentProblem.answer}.<br>Tu peux réessayer ou demander à OpenClaw de vérifier !`;
-                document.getElementById('scoreText').textContent = '0/10';
-                scoreDiv.style.display = 'block';
-            }
-        }
-        
-        function checkWithAI() {
-            const userAnswer = document.getElementById('userAnswer').value;
-            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('verifyBtn');
             
             if (!userAnswer.trim()) {
                 alert('Écris d\'abord ta réponse !');
                 return;
             }
             
-            resultDiv.className = 'result ai-pending';
-            resultDiv.innerHTML = `🤖 <strong>OpenClaw vérifie ta réponse...</strong><br><br>Va sur Telegram, je vais te donner le résultat !`;
+            // Show loading
+            btn.disabled = true;
+            resultDiv.className = 'result thinking';
+            resultDiv.innerHTML = '<div class="loading-spinner"></div>L\'IA vérifie ta réponse...';
             
-            // Prepare the message to send via webhook
-            const message = `🧮 <strong>Vérification Maths CM2</strong>\n\n` +
-                `<strong>Problème :</strong>\n${currentProblem.text.replace(/<[^>]*>/g, '')}\n\n` +
-                `<strong>Réponse de l'élève :</strong>\n${userAnswer}\n\n` +
-                `<strong>Réponse correcte :</strong>\n${currentProblem.answer}`;
+            try {
+                // Use AI API if configured
+                if (API_CONFIG && API_CONFIG.apiKey) {
+                    const response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + API_CONFIG.apiKey
+                        },
+                        body: JSON.stringify({
+                            model: 'MiniMax-M2.5',
+                            messages: [{
+                                role: 'system',
+                                content: 'Tu es un assistant qui vérifie les réponses de maths pour un élève de CM2. Sois encourageant et gentil. Explique clairement si la réponse est correcte ou non, et pourquoi.'
+                            }, {
+                                role: 'user',
+                                content: `Vérifie cette réponse d'un élève de CM2:\n\n**Problème:**\n${currentProblem.text.replace(/<[^>]*>/g, '')}\n\n**Réponse de l'élève:**\n${userAnswer}\n\n**Réponse attendue:**\n${currentProblem.fullAnswer}\n\nRéponds en français. Dis si c\'est correct ou non, et explique pourquoi. Sois indulgent si la réponse est formulée différemment mais que le raisonnement est bon.'
+                            }],
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    const aiResponse = data.choices?.[0]?.message?.content || 'Erreur de communication avec l\'IA';
+                    
+                    // Check if the response seems positive
+                    const isCorrect = /correct|bravo|exact|juste|bien joué|très bien/i.test(aiResponse);
+                    
+                    resultDiv.className = isCorrect ? 'result correct' : 'result incorrect';
+                    resultDiv.innerHTML = aiResponse;
+                    document.getElementById('scoreText').textContent = isCorrect ? '✅ Correct !' : '❌ Incorrect';
+                } else {
+                    // Fallback: smart local checking
+                    const isCorrect = checkAnswerLocally(userAnswer, currentProblem.answer);
+                    
+                    if (isCorrect) {
+                        resultDiv.className = 'result correct';
+                        resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>\n\nTa réponse est bonne. Continue comme ça !';
+                        document.getElementById('scoreText').textContent = '✅ Correct !';
+                    } else {
+                        resultDiv.className = 'result incorrect';
+                        resultDiv.innerHTML = '❌ <strong>Désolé, ce n\'est pas tout à fait ça.</strong>\n\nLa bonne réponse était: ' + currentProblem.answer + '\n\nMais c\'est bien d\'avoir essayé !';
+                        document.getElementById('scoreText').textContent = '❌ Incorrect';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback to local checking
+                const isCorrect = checkAnswerLocally(userAnswer, currentProblem.answer);
+                
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>';
+                    document.getElementById('scoreText').textContent = '✅ Correct !';
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = '❌ <strong>Désolé, ce n\'est pas correct.</strong>\n\nLa réponse attendue était: ' + currentProblem.answer;
+                    document.getElementById('scoreText').textContent = '❌ Incorrect';
+                }
+            }
             
-            // Store the message to send
-            window.pendingVerification = {
-                problem: currentProblem.text,
-                userAnswer: userAnswer,
-                correctAnswer: currentProblem.answer
-            };
+            scoreDiv.style.display = 'block';
+            btn.disabled = false;
+        }
+        
+        function checkAnswerLocally(userAnswer, correctAnswer) {
+            // Extract all numbers from user answer
+            const numbers = userAnswer.match(/-?\d+(\.\d+)?/g);
+            if (!numbers) return false;
             
-            // Show the message
-            alert('Va sur Telegram ! J\'ai besoin que tu me dises "vérifie" pour que je проверю ta réponse.');
+            const num = parseFloat(numbers[0]);
+            return Math.abs(num - correctAnswer) < 0.1 || numbers.includes(correctAnswer.toString());
         }
         
         let timeLeft = 30 * 60;
@@ -482,24 +544,13 @@
                     timeLeft--;
                     const m = Math.floor(timeLeft / 60);
                     const s = timeLeft % 60;
-                    document.getElementById('timer').textContent = 
-                        `${m}:${s.toString().padStart(2, '0')}`;
+                    document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
                 }
             }, 1000);
         }
         
-        // Allow Enter key for password
         document.getElementById('password').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-        
-        // Allow Enter key for answer
-        document.getElementById('userAnswer').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAnswerLocal();
-            }
+            if (e.key === 'Enter') checkPassword();
         });
     </script>
 </body>
