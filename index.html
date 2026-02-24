@@ -12,26 +12,23 @@
         .subtitle { color: #a0a0a0; text-align: center; margin-bottom: 30px; }
         .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .problem-box { background: #fff8e1; border: 3px solid #ffb300; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
-        .problem-text { font-size: 1.15rem; line-height: 1.8; color: #333; }
-        .problem-text p { margin-bottom: 15px; }
+        .problem-text { font-size: 1.2rem; line-height: 2; color: #333; }
+        .problem-text p { margin-bottom: 20px; }
+        .question { background: #e3f2fd; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .question strong { color: #1565c0; }
         .answer-section { background: #f3e5f5; border: 3px solid #9c27b0; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
         .answer-section h3 { color: #7b1fa2; margin-bottom: 15px; }
-        input[type="text"], input[type="password"] { width: 100%; max-width: 500px; padding: 15px; font-size: 1.1rem; border: 3px solid #9c27b0; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-        textarea { width: 100%; max-width: 500px; padding: 15px; font-size: 1.1rem; border: 3px solid #9c27b0; border-radius: 10px; margin-bottom: 10px; min-height: 100px; font-family: inherit; }
+        textarea { width: 100%; padding: 15px; font-size: 1.2rem; border: 3px solid #9c27b0; border-radius: 10px; margin-bottom: 10px; min-height: 120px; font-family: inherit; }
         button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin: 5px; transition: transform 0.2s; }
         button:hover { transform: translateY(-3px); }
-        button:disabled { opacity: 0.6; }
         .check-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
         .new-btn { background: linear-gradient(135deg, #ff9800 0%, #e65100 100%); }
-        .print-btn { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
-        .timer { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white; padding: 20px 40px; border-radius: 50px; font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 20px; display: inline-block; }
+        .timer { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white; padding: 15px 30px; border-radius: 50px; font-size: 1.8rem; font-weight: bold; text-align: center; margin-bottom: 20px; display: inline-block; }
         .timer-container { text-align: center; margin-bottom: 20px; }
-        .result { display: none; padding: 20px; border-radius: 15px; text-align: left; font-size: 1.1rem; margin-top: 15px; white-space: pre-wrap; }
+        .result { display: none; padding: 20px; border-radius: 15px; text-align: left; font-size: 1.1rem; margin-top: 15px; }
         .result.correct { display: block; background: #c8e6c9; border: 3px solid #4caf50; color: #2e7d32; }
         .result.incorrect { display: block; background: #ffcdd2; border: 3px solid #f44336; color: #c62828; }
         .result.thinking { display: block; background: #fff3e0; border: 3px solid #ff9800; color: #e65100; }
-        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #ff9800; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .score-display { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
         .score-display h2 { font-size: 3rem; margin: 10px 0; }
         .controls { text-align: center; margin-top: 20px; }
@@ -39,6 +36,7 @@
         .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .login-box h2 { color: #333; margin-bottom: 20px; }
         .main-content { display: none; }
+        .hint { background: #fff3e0; border: 2px dashed #ff9800; padding: 15px; border-radius: 10px; margin-top: 15px; font-style: italic; color: #e65100; }
     </style>
 </head>
 <body>
@@ -67,10 +65,10 @@
             </div>
             
             <div class="card answer-section">
-                <h3>📝 Ta réponse</h3>
-                <textarea id="userAnswer" placeholder="Écris ta réponse ici..."></textarea>
+                <h3>📝 Écris ta réponse ci-dessous :</h3>
+                <textarea id="userAnswer" placeholder="Écris ta réponse ici... N'oublie pas d'écrire le nombre final !"></textarea>
                 <br><br>
-                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier</button>
+                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier ma réponse</button>
                 <div class="result" id="result"></div>
             </div>
             
@@ -79,21 +77,141 @@
             </div>
             
             <div class="controls">
-                <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
+                <button class="new-btn" onclick="generateNewProblem()">🔄 Changer de problème</button>
             </div>
         </div>
     </div>
 
     <script>
         var problems = [
-            {text:"<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille (4 personnes).</p><p><strong>Questions :</strong></p><p>1. Gâteau: 250g farine, 200g sucre, 150g beurre (pour 6 personnes). <strong>Pour 12 personnes ?</strong></p><p>2. Chaque invité mange 2 parts. <strong>Combien de parts ?</strong></p><p>3. Gâteau coûte 15€. <strong>Prix par personne ?</strong></p><p>4. Soda: 2€50 la bouteille, 1 pour 3 personnes. <strong>Prix total ?</strong></p><p>5. 5 enfants invités, 1 balloon à 1€ chacun. <strong>Prix total ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:5},
-            {text:"<p><strong>Contexte :</strong> Voyage en train. Départ 8h15, arrivée 14h45.</p><p><strong>Questions :</strong></p><p>1. <strong>Durée du voyage ?</strong></p><p>2. Billet: 45€ adulte, demi-tarif enfant. Luc + 2 enfants. <strong>Prix total ?</strong></p><p>3. 6 wagons de 50 places. 120 personnes montent. <strong>Places libres ?</strong></p><p>4. 35 descendent, 28 montent. <strong>Voyageurs dans le train ?</strong></p><p>5. Journal 3€50, café 2€50. Paye avec 20€. <strong>Rendu ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:14},
-            {text:"<p><strong>Contexte :</strong> Soldes! Livre 25€, jeu 60€, jouet 15€.</p><p><strong>Questions :</strong></p><p>1. 3 livres + 2 jeux. <strong>Prix ?</strong></p><p>2. -20% sur livres. <strong>Prix des 3 livres soldés ?</strong></p><p>3. 100€ + 4 jouets. <strong>Manque ?</strong></p><p>4. Marie paie moins 15€ grâce aux soldes. <strong>Prix total ?</strong></p><p>5. 5 amis à 12€ pour un cadeau de 55€. <strong>Reste ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:5},
-            {text:"<p><strong>Contexte :</strong> Fermier: Ferme1=45 moutons. Ferme2=double Ferme1. Ferme3=30 de moins que Ferme2.</p><p><strong>Questions :</strong></p><p>1. <strong>Moutons Ferme2 ?</strong></p><p>2. <strong>Moutons Ferme3 ?</strong></p><p>3. <strong>Total moutons ?</strong></p><p>4. Vend 60 moutons. <strong>Reste ?</strong></p><p>5. Mouton = 80€. <strong>Argent vente 60 moutons ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:4800},
-            {text:"<p><strong>Contexte :</strong> Classe: 24 élèves + 3 maîtres. Car: 60 places.</p><p><strong>Questions :</strong></p><p>1. <strong>Places libres ?</strong></p><p>2. Trajet 2h15. <strong>En minutes ?</strong></p><p>3. Prix 35€ par élève. <strong>Total 24 élèves ?</strong></p><p>4. Maîtres gratuit. <strong>Recette ?</strong></p><p>5. Subventions 200€ + 150€. <strong>Manque ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:390},
-            {text:"<p><strong>Contexte :</strong> Sophie: 125 cartes Pokemon.</p><p><strong>Questions :</strong></p><p>1. +10 cartes/semaine pendant 4 semaines. <strong>Total ?</strong></p><p>2. Échange 25 cartes contre 1 rare. <strong>Reste ?</strong></p><p>3. Vend 30 cartes à 2€. <strong>Argent ?</strong></p><p>4. Achète 3 albums à 12€. <strong>Dépense totale ?</strong></p><p>5. Il reste 155€. <strong>Somme départ ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:233},
-            {text:"<p><strong>Contexte :</strong> Maraîcher: 100kg tomates à 3€/kg.</p><p><strong>Questions :</strong></p><p>1. <strong>Valeur tomates ?</strong></p><p>2. +50kg pommes de terre à 2€/kg. <strong>Valeur ?</strong></p><p>3. <strong>Total gagné ?</strong></p><p>4. -20€ emplacement. <strong>Reste ?</strong></p><p>5. Verse sur compte (450€). <strong>Nouveau solde ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:720},
-            {text:"<p><strong>Contexte :</strong> Lapin: 3 portées/an, 6 lapereaux/portée.</p><p><strong>Questions :</strong></p><p>1. <strong>Lapereaux/an ?</strong></p><p>2. Moitié femelles. <strong>Nombre ?</strong></p><p>3. 200g/jour. <strong>Kg/semaine ?</strong></p><p>4. Nourriture 2€/kg. <strong>Prix/semaine ?</strong></p><p>5. Vend 30 à 15€. <strong>Argent ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:450}
+            {
+                text: `<p><strong>📖 L'histoire :</strong> La famille Dupont prépare l'anniversaire de leur fils. Il y a <strong>8 invités</strong> qui viennent à la fête, plus les membres de la famille : le père, la mère et les deux enfants. Cela fait <strong>4 personnes</strong> de la famille.</p>
+
+<div class="question"><strong>Question 1 :</strong> Pour faire un gâteau, la recette dit qu'il faut <strong>250g de farine</strong>, <strong>200g de sucre</strong> et <strong>150g de beurre</strong> pour <strong>6 personnes</strong>. Mais ils doivent préparer pour tout le monde ! <br>➡️ <strong>Calcule la quantité de chaque ingrédient nécessaire pour 12 personnes</strong> (car 8 invités + 4 famille = 12 personnes).</div>
+
+<div class="question"><strong>Question 2 :</strong> Chaque invité mange <strong>2 parts de gâteau</strong>. Les enfants de la famille mangent aussi chacun 2 parts.<br>➡️ <strong>Combien de parts de gâteau sont mangées au total ?</strong></div>
+
+<div class="question"><strong>Question 3 :</strong> Le gâteau coûte <strong>15€</strong> à faire avec tous les ingrédients.<br>➡️ <strong>Combien chaque personne doit-elle payer</strong> pour avoir une part de gâteau ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Ils achètent des bouteilles de soda à <strong>2€50</strong> chacune. Ils prévoient <strong>1 bouteille pour 3 personnes</strong>.<br>➡️ <strong>Combien vont coûter toutes les bouteilles de soda ?</strong></div>
+
+<div class="question"><strong>Question 5 :</strong> Parmi les 8 invités, il y a <strong>5 enfants</strong>. Chaque enfant reçoit <strong>1 balloon</strong> qui coûte <strong>1€</strong>.<br>➡️ <strong>Combien coûtent toutes les balloons ?</strong></div>
+
+<div class="hint">💡 <strong>La réponse finale</strong> que tu dois donner est la réponse de la <strong>Question 5</strong> (le prix des balloons).</div>`,
+                answer: 5
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> Luc veut aller voir sa grand-mère qui habite loin. Il prend le train. Le train <strong>part de la gare à 8h15</strong> du matin et <strong>arrive à destination à 14h45</strong>.</p>
+
+<div class="question"><strong>Question 1 :</strong> Le voyage commence à 8h15 et finit à 14h45.<br>➡️ <strong>Quelle est la durée totale du voyage</strong> en heures et minutes ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Un billet de train coûte <strong>45€</strong> pour un adulte. Luc voyage avec ses <strong>2 enfants</strong>, qui payent demi-tarif (la moitié du prix).<br>➡️ <strong>Combien la famille complète paye-t-elle</strong> pour les billets de train ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Dans le train, il y a <strong>6 wagons</strong>. Chaque wagon a <strong>50 places assises</strong>. À la première gare, <strong>120 personnes</strong> montent dans le train.<br>➡️ <strong>Combien de places restent libres</strong> dans le train après que tous ces voyageurs sont assis ?</div>
+
+<div class="question"><strong>Question 4 :</strong> À la deuxième gare, <strong>35 personnes descendent</strong> du train, mais <strong>28 nouvelles personnes montent</strong>.<br>➡️ <strong>Combien y a-t-il de voyageurs</strong> dans le train après cette deuxième gare ?</div>
+
+<div class="question"><strong>Question 5 :</strong> Pendant le voyage, Luc achète un journal à <strong>3€50</strong> et un café à <strong>2€50</strong>. Il paye avec un <strong>billet de 20€</strong>.<br>➡️ <strong>Combien d'argent le rendent-ils</strong> ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent rendu).</div>`,
+                answer: 14
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> C'est les soldes dans un grand magasin ! Les prix sont réduits. Un <strong>livre</strong> coûte normalement <strong>25€</strong>, un <strong>jeu vidéo</strong> coûte <strong>60€</strong> et un <strong>jouet</strong> coûte <strong>15€</strong>.</p>
+
+<div class="question"><strong>Question 1 :</strong> Marie veut acheter <strong>3 livres</strong> et <strong>2 jeux vidéo</strong>.<br>➡️ <strong>Combien va-t-elle payer</strong> au prix normal (sans soldes) ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Il y a des soldes : <strong>-20%</strong> sur tous les livres ! Cela veut dire que le prix est réduit de 20%.<br>➡️ <strong>Combien coûtent les 3 livres</strong> avec la réduction ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Pierre a <strong>100€</strong> dans sa tirelire. Il veut acheter <strong>4 jouets</strong>.<br>➡️ <strong>Combien lui manque-t-il</strong> pour pouvoir les acheter ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Grâce aux soldes, Marie économise <strong>15€</strong> sur ses livres.<br>➡️ <strong>Combien a-t-elle payé au total</strong> pour ses 3 livres soldés + ses 2 jeux ?</div>
+
+<div class="question"><strong>Question 5 :</strong> <strong>5 amis</strong> mettent chacun <strong>12€</strong> pour acheter un cadeau d'anniversaire qui coûte <strong>55€</strong>.<br>➡️ <strong>Combien d'argent reste-t-il</strong> après l'achat du cadeau ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent rest</div>`,
+                answer: 5
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> Un fermier possède <strong>3 fermes</strong> avec des moutons. Dans la première ferme, il a <strong>45 moutons</strong>.</p>
+
+<div class="question"><strong>Question 1 :</strong> La deuxième ferme contient <strong>le double</strong> de la première ferme.<br>➡️ <strong>Combien y a-t-il de moutons</strong> dans la deuxième ferme ?</div>
+
+<div class="question"><strong>Question 2 :</strong> La troisième ferme a <strong>30 moutons de moins</strong> que la deuxième ferme.<br>➡️ <strong>Combien y a-t-il de moutons</strong> dans la troisième ferme ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Maintenant que tu connais le nombre de moutons dans chaque ferme...<br>➡️ <strong>Combien y a-t-il de moutons au total</strong> dans les 3 fermes ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Le fermier vend <strong>60 moutons</strong> à un autre eleveur.<br>➡️ <strong>Combien de moutons lui reste-t-il</strong> ?</div>
+
+<div class="question"><strong>Question 5 :</strong> Chaque mouton vaut <strong>80€</strong>.<br>➡️ <strong>Combien d'argent</strong> le fermier reçoit-il en vendant ses 60 moutons ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent reçu).</div>`,
+                answer: 4800
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> La classe de CM2 de Mme Martin part en voyage scolaire. Il y a <strong>24 élèves</strong> dans la classe et <strong>3 maîtres/maîtresses</strong> qui accompagnent.</p>
+
+<div class="question"><strong>Question 1 :</strong> Le car qui les emmène a <strong>60 places assises</strong>.<br>➡️ <strong>Combien de places restent libres</strong> après que tout le monde est monte ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Le trajet aller dure <strong>2 heures et 15 minutes</strong>.<br>➡️ <strong>Combien de minutes</strong> dure ce trajet ?</div>
+
+<div class="question"><<strong>Question 3 :</strong> Le prix du voyage est de <strong>35€ par élève</strong>.<br>➡️ <strong>Combien paient les 24 élèves</strong> au total ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Les maîtres et maîtresses ne payent pas le voyage.<br>➡️ <strong>Quelle est la recette totale</strong> que l'école reçoit des élèves ?</div>
+
+<div class="question"><strong>Question 5 :</strong> L'école reçoit des aides : une subvention de <strong>200€</strong> et une autre de <strong>150€</strong>.<br>➡️ <strong>Combien d'argent manque-t-il encore</strong> pour payer le voyage de tous les élèves ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent manqu</div>`,
+                answer: 390
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> Sophie collectionne des cartes Pokemon. Elle en a déjà <strong>125</strong> dans sa boîte.</p>
+
+<div class="question"><strong>Question 1 :</strong> Chaque semaine, elle achète un paquet de <strong>10 cartes</strong>. Elle fait ça pendant <strong>4 semaines</strong>.<br>➡️ <strong>Combien de cartes a-t-elle maintenant</strong> ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Elle decide d'échanger <strong>25 de ses cartes</strong> contre <strong>1 carte très rare</strong>.<br>➡️ <strong>Combien de cartes lui reste-t-il</strong> après cet échange ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Elle revend certaines de ses cartes doubles. Elle vend <strong>30 cartes</strong> à <strong>2€</strong> chacune.<br>➡️ <strong>Combien d'argent gagne-t-elle</strong> en vendant ces cartes ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Elle veut ranger ses cartes et achète <strong>3 albums</strong> qui coûtent chacun <strong>12€</strong>.<br>➡️ <strong>Combien a-t-elle dépensé</strong> pour les albums ?</div>
+
+<div class="question"><strong>Question 5 :</strong> Après tous ces achats et ventes, il lui reste <strong>155€</strong> dans son porte-feuille.<br>➡️ <strong>Combien d'argent avait-elle au départ</strong> avant de commencer sa collection ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (la somme de départ).</div>`,
+                answer: 233
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> Un maraîcher (un farmer de légumes) va vendre sa récolte au marché. Il apporte <strong>100 kg de tomates</strong> qui coûtent <strong>3€ le kilogramme</strong>.</p>
+
+<div class="question"><strong>Question 1 :</strong> Calcule la valeur de sa récolte de tomates.<br>➡️ <strong>Combien d'argent</strong> va-t-il gagner rien qu'avec les tomates ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Il vend aussi <strong>50 kg de pommes de terre</strong> qui coûtent <strong>2€ le kilogramme</strong>.<br>➡️ <strong>Combien vaut</strong> sa récolte de pommes de terre ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Additionne l'argent des tomates et des pommes de terre.<br>➡️ <strong>Combien a-t-il gagné au total</strong> au marché ?</div>
+
+<div class="question"><strong>Question 4 :</strong> Pour vendre au marché, il doit payer <strong>20€</strong> pour l'emplacement de son stand.<br>➡️ <strong>Combien lui reste-t-il</strong> après avoir payé ?</div>
+
+<div class="question"><strong>Question 5 :</strong> Il met cet argent sur son compte en banque. Son compte contenait déjà <strong>450€</strong> avant.<br>➡️ <strong>Quel est le nouveau solde</strong> de son compte bancaire ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (le nouveau solde).</div>`,
+                answer: 720
+            },
+            {
+                text: `<p><strong>📖 L'histoire :</strong> Un lapin a des petits. Chaque année, la lapine a <strong>3 portées</strong>. Chaque portée compte en moyenne <strong>6 lapereaux</strong> (petits lapins).</p>
+
+<div class="question"><strong>Question 1 :</strong> Calcule le nombre de lapereaux qui naissent chaque année.<br>➡️ <strong>Combien de lapereaux</strong> naissent au total en 1 an ?</div>
+
+<div class="question"><strong>Question 2 :</strong> Parmi tous ces lapereaux, <strong>la moitié sont des femelles</strong>.<br>➡️ <strong>Combien de femelles</strong> y a-t-il ?</div>
+
+<div class="question"><strong>Question 3 :</strong> Chaque lapereau mange <strong>200g de nourriture</strong> par jour. Une semaine, c'est <strong>7 jours</strong>.<br>➡️ <strong>Combien de kilogrammes</strong> de nourriture mangent-ils en une semaine ?</div>
+
+<div class="question"><strong>Question 4 :</strong> La nourriture du lapin coûte <strong>2€ le kilogramme</strong>.<br>➡️ <strong>Combien coûte la nourriture</strong> pour une semaine ?</div>
+
+<div class="question"><strong>Question 5 :</strong> La famille vend <strong>30 lapereaux</strong> à <strong>15€</strong> chacun.<br>➡️ <strong>Combien d'argent</strong> reçoivent-ils en vendant ces lapereaux ?</div>
+
+<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent reçu).</div>`,
+                answer: 450
+            }
         ];
         
         var currentProblem = null;
@@ -131,11 +249,10 @@
             }
             
             resultDiv.className = 'result thinking';
-            resultDiv.innerHTML = '⏳ L\'IA vérifie...';
+            resultDiv.innerHTML = '⏳ L\'IA vérifie ta réponse...';
             
-            // Smart local checking
             setTimeout(function() {
-                var numbers = userAnswer.match(/\d+/g);
+                var numbers = userAnswer.match(/-?\d+/g);
                 var isCorrect = false;
                 
                 if (numbers && numbers.indexOf(currentProblem.answer.toString()) !== -1) {
@@ -144,11 +261,11 @@
                 
                 if (isCorrect) {
                     resultDiv.className = 'result correct';
-                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>\n\nLa réponse attendue était: ' + currentProblem.answer;
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse attendue était: ' + currentProblem.answer;
                     document.getElementById('scoreText').textContent = '✅ Correct !';
                 } else {
                     resultDiv.className = 'result incorrect';
-                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong>\n\nLa bonne réponse était: ' + currentProblem.answer + '\n\nMais continue, c\'est en forgeant qu\'on devient forgeron !';
+                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse était: ' + currentProblem.answer + '<br><br>Mais continue, tu vas y arriver !';
                     document.getElementById('scoreText').textContent = '❌ Essaie encore';
                 }
                 
