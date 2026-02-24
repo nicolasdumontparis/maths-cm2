@@ -21,6 +21,7 @@
         .answer-section h3 { color: #7b1fa2; margin-bottom: 15px; }
         button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin: 5px; transition: transform 0.2s; }
         button:hover { transform: translateY(-3px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         .check-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
         .new-btn { background: linear-gradient(135deg, #ff9800 0%, #e65100 100%); }
         .timer { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white; padding: 15px 30px; border-radius: 50px; font-size: 1.8rem; font-weight: bold; text-align: center; margin-bottom: 20px; display: inline-block; }
@@ -36,7 +37,9 @@
         .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .login-box h2 { color: #333; margin-bottom: 20px; }
         .main-content { display: none; }
-        .hint { background: #fff3e0; border: 2px dashed #ff9800; padding: 15px; border-radius: 10px; margin-top: 15px; font-style: italic; color: #e65100; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+        .spinner { display: inline-block; width: 30px; height: 30px; border: 4px solid #ff9800; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -60,7 +63,12 @@
             
             <div class="card">
                 <div class="problem-box">
-                    <div class="problem-text" id="problemText">Chargement...</div>
+                    <div class="problem-text" id="problemText">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            L'IA génère un problème...
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -68,7 +76,7 @@
                 <h3>📝 Réponds à chaque question :</h3>
                 <div id="answersContainer"></div>
                 <br>
-                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier toutes mes réponses</button>
+                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier mes réponses</button>
                 <div class="result" id="result"></div>
             </div>
             
@@ -77,145 +85,15 @@
             </div>
             
             <div class="controls">
-                <button class="new-btn" onclick="generateNewProblem()">🔄 Changer de problème</button>
+                <button class="new-btn" onclick="generateNewProblem()" id="newBtn">🔄 Nouveau problème (IA)</button>
             </div>
         </div>
     </div>
 
     <script>
-        var problems = [
-            {
-                text: `<p><strong>📖 L'histoire :</strong> La famille Dupont prépare l'anniversaire. Il y a <strong>8 invités</strong> + la famille (père, mère, 2 enfants = 4 personnes).</p>
-
-<div class="question"><strong>Question 1 :</strong> Gâteau : 250g farine, 200g sucre, 150g beurre pour 6 personnes.<br>➡️ <strong>Quantité pour 12 personnes ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Chaque invité mange 2 parts.<br>➡️ <strong>Combien de parts au total ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Gâteau coûte 15€.<br>➡️ <strong>Prix par personne ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Soda 2€50, 1 bouteille pour 3 personnes.<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> 5 enfants invités, 1 balloon à 1€.<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 5}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Voyage en train. Départ 8h15, arrivée 14h45. Adulte 45€, enfant demi-tarif.</p>
-
-<div class="question"><strong>Question 1 :</strong> Durée du voyage ?<br><input type="number" class="answer-input" data-q="1" placeholder="En minutes"></div>
-
-<div class="question"><strong>Question 2 :</strong> Père + 2 enfants (demi-tarif).<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> 6 wagons × 50 places. 120 personnes montent.<br>➡️ <strong>Places libres ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> 35 descendent, 28 montent.<br>➡️ <strong>Voyageurs dans le train ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Journal 3€50, café 2€50. Paye 20€.<br>➡️ <strong>Rendu ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 14}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Soldes ! Livre 25€, Jeu 60€, Jouet 15€.</p>
-
-<div class="question"><strong>Question 1 :</strong> 3 livres + 2 jeux.<br>➡️ <strong>Prix normal ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> -20% sur les livres.<br>➡️ <strong>Prix soldés des 3 livres ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> 100€ + 4 jouets.<br>➡️ <strong>Manque ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Marie économise 15€ grâce aux soldes.<br>➡️ <strong>Prix total (livres + jeux) ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> 5 amis × 12€ pour un cadeau de 55€.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 5}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Fermier : Ferme1 = 45 moutons. Ferme2 = double Ferme1. Ferme3 = 30 de moins que Ferme2.</p>
-
-<div class="question"><strong>Question 1 :</strong> Ferme2 ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de moutons"></div>
-
-<div class="question"><strong>Question 2 :</strong> Ferme3 ?<br><input type="number" class="answer-input" data-q="2" placeholder="Nombre de moutons"></div>
-
-<div class="question"><strong>Question 3 :</strong> Total des 3 fermes ?<br><input type="number" class="answer-input" data-q="3" placeholder="Nombre de moutons"></div>
-
-<div class="question"><strong>Question 4 :</strong> Vend 60 moutons.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Nombre de moutons"></div>
-
-<div class="question"><strong>Question 5 :</strong> Mouton = 80€.<br>➡️ <strong>Argent vente 60 moutons ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 4800}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Classe CM2 : 24 élèves + 3 maîtres. Car : 60 places.</p>
-
-<div class="question"><strong>Question 1 :</strong> Places libres ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de places"></div>
-
-<div class="question"><strong>Question 2 :</strong> Trajet 2h15.<br>➡️ <strong>En minutes ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Minutes"></div>
-
-<div class="question"><strong>Question 3 :</strong> 35€ par élève.<br>➡️ <strong>Total 24 élèves ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 4 :</strong> Maîtres gratuit.<br>➡️ <strong>Recette totale ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 5 :</strong> Subventions 200€ + 150€.<br>➡️ <strong>Manque ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 390}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Sophie : 125 cartes Pokemon.</p>
-
-<div class="question"><strong>Question 1 :</strong> +10 cartes/semaine × 4 semaines.<br>➡️ <strong>Total ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de cartes"></div>
-
-<div class="question"><strong>Question 2 :</strong> Échange 25 cartes contre 1 rare.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Nombre de cartes"></div>
-
-<div class="question"><strong>Question 3 :</strong> Vend 30 cartes à 2€.<br>➡️ <strong>Argent ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 4 :</strong> Achète 3 albums à 12€.<br>➡️ <strong>Dépense ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 5 :</strong> Il reste 155€.<br>➡️ <strong>Somme de départ ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 233}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Maraîcher : 100kg tomates à 3€/kg.</p>
-
-<div class="question"><strong>Question 1 :</strong> Valeur tomates ?<br><input type="number" class="answer-input" data-q="1" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 2 :</strong> +50kg pommes de terre à 2€/kg.<br>➡️ <strong>Valeur ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 3 :</strong> Total gagné ?<br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 4 :</strong> -20€ emplacement.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 5 :</strong> Verse sur compte (450€ avant).<br>➡️ <strong>Nouveau solde ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 720}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Lapin : 3 portées/an, 6 lapereaux/portée.</p>
-
-<div class="question"><strong>Question 1 :</strong> Lapereaux/an ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre"></div>
-
-<div class="question"><strong>Question 2 :</strong> Moitié femelles.<br>➡️ <strong>Nombre ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Nombre"></div>
-
-<div class="question"><strong>Question 3 :</strong> 200g/jour × 7 jours.<br>➡️ <strong>Kg/semaine ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Kg"></div>
-
-<div class="question"><strong>Question 4 :</strong> Nourriture 2€/kg.<br>➡️ <strong>Prix/semaine ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
-
-<div class="question"><strong>Question 5 :</strong> Vend 30 à 15€.<br>➡️ <strong>Argent ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 450}
-            }
-        ];
-        
         var currentProblem = null;
         var timeLeft = 30 * 60;
+        var isGenerating = false;
         
         function doLogin() {
             var pwd = document.getElementById('password').value;
@@ -228,18 +106,112 @@
             }
         }
         
-        function generateNewProblem() {
-            currentProblem = problems[Math.floor(Math.random() * problems.length)];
-            document.getElementById('problemText').innerHTML = currentProblem.text;
+        async function generateNewProblem() {
+            if (isGenerating) return;
+            isGenerating = true;
+            
+            document.getElementById('newBtn').disabled = true;
+            document.getElementById('problemText').innerHTML = '<div class="loading"><div class="spinner"></div>L\'IA génère un problème...</div>';
+            document.getElementById('answersContainer').innerHTML = '';
             document.getElementById('result').style.display = 'none';
             document.getElementById('scoreDisplay').style.display = 'none';
+            
+            var prompt = `Génère un problème de maths pour un élève de CM2 (10-11 ans) avec UN SEUL contexte (une petite histoire) et 5 questions progressives. 
+
+Le contexte doit être concret et amusant (anniversaire, voyage, courses, ferme, etc.)
+
+Chaque question doit être plus difficile que la précédente.
+
+À la fin, indique clairement quelle est la réponse finale attendue pour la Question 5.
+
+Format EXACT à suivre (très important):
+
+---
+CONTEXTE: [Petite histoire amusante]
+
+Question 1: [question simple]
+Question 2: [question un peu plus dure]
+Question 3: [question encore plus dure]
+Question 4: [question difficile]
+Question 5: [la plus difficile]
+
+RÉPONSE FINALE: [Le nombre exact de la Question 5]
+---`;
+            
+            try {
+                var response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+                    },
+                    body: JSON.stringify({
+                        model: 'MiniMax-M2.5',
+                        messages: [
+                            {role: 'system', content: 'Tu es un professeur de maths pour enfants de CM2. Tu génères des problèmes de maths stimulants et amusants.'},
+                            {role: 'user', content: prompt}
+                        ],
+                        temperature: 0.9
+                    })
+                });
+                
+                var data = await response.json();
+                var aiText = data.choices?.[0]?.message?.content || '';
+                
+                // Parse the response
+                var lines = aiText.split('\n');
+                var context = '';
+                var questions = [];
+                var finalAnswer = '';
+                
+                var currentSection = '';
+                lines.forEach(function(line) {
+                    line = line.trim();
+                    if (line.startsWith('CONTEXTE:')) {
+                        currentSection = 'contexte';
+                        context = line.replace('CONTEXTE:', '').trim();
+                    } else if (line.startsWith('Question')) {
+                        currentSection = 'question';
+                        questions.push(line);
+                    } else if (line.startsWith('RÉPONSE FINALE:') || line.startsWith('RÉPONSE:')) {
+                        currentSection = 'answer';
+                        finalAnswer = line.replace(/RÉPONSE FINALE:|RÉPONSE:/i, '').trim();
+                    } else if (currentSection === 'contexte' && line) {
+                        context += ' ' + line;
+                    }
+                });
+                
+                // Extract numbers from final answer
+                var numbers = finalAnswer.match(/\d+/);
+                var answerNum = numbers ? parseInt(numbers[0]) : 0;
+                
+                // Build HTML
+                var html = '<p><strong>📖 ' + context + '</strong></p>';
+                questions.forEach(function(q, i) {
+                    html += '<div class="question"><strong>' + q + '</strong><br><input type="number" class="answer-input" data-q="' + (i+1) + '" placeholder="Ta réponse"></div>';
+                });
+                html += '<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>';
+                
+                currentProblem = {
+                    text: html,
+                    answer: answerNum
+                };
+                
+                document.getElementById('problemText').innerHTML = html;
+                
+            } catch(e) {
+                console.error(e);
+                document.getElementById('problemText').innerHTML = '<p style="color:red">Erreur de génération. Cliquez sur "Nouveau problème" pour réessayer.</p>';
+            }
+            
+            isGenerating = false;
+            document.getElementById('newBtn').disabled = false;
             timeLeft = 30 * 60;
             startTimer();
         }
         
         function checkWithAI() {
             var inputs = document.querySelectorAll('.answer-input');
-            var userAnswer = '';
             var q5Answer = '';
             
             inputs.forEach(function(input) {
@@ -247,14 +219,13 @@
                 if (q === '5') {
                     q5Answer = input.value;
                 }
-                userAnswer += 'Q' + q + ': ' + input.value + '\n';
             });
             
             var resultDiv = document.getElementById('result');
             var scoreDiv = document.getElementById('scoreDisplay');
             
             if (!q5Answer.trim()) {
-                alert('Réponds au moins à la Question 5 !');
+                alert('Réponds à la Question 5 !');
                 return;
             }
             
@@ -265,17 +236,17 @@
                 var numbers = q5Answer.match(/\d+/g);
                 var isCorrect = false;
                 
-                if (numbers && numbers.indexOf(currentProblem.answers[5].toString()) !== -1) {
+                if (numbers && currentProblem && numbers.indexOf(currentProblem.answer.toString()) !== -1) {
                     isCorrect = true;
                 }
                 
                 if (isCorrect) {
                     resultDiv.className = 'result correct';
-                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse à la Question 5 était bien: ' + currentProblem.answers[5];
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse à la Question 5 était bien: ' + currentProblem.answer;
                     document.getElementById('scoreText').textContent = '✅ Excellent !';
                 } else {
                     resultDiv.className = 'result incorrect';
-                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse à la Question 5 était: ' + currentProblem.answers[5] + '<br><br>Mais continue, tu vas y arriver !';
+                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse à la Question 5 était: ' + (currentProblem ? currentProblem.answer : '?') + '<br><br>Mais continue, tu vas y arriver !';
                     document.getElementById('scoreText').textContent = '❌ Réessaie';
                 }
                 
