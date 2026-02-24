@@ -87,16 +87,18 @@
             margin-bottom: 15px;
         }
         
-        input[type="number"] {
-            width: 200px;
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            max-width: 400px;
             padding: 15px;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             border: 3px solid #9c27b0;
             border-radius: 10px;
             text-align: center;
+            margin-bottom: 10px;
         }
         
-        input[type="number"]:focus {
+        input:focus {
             outline: none;
             border-color: #6a1b9a;
         }
@@ -120,6 +122,10 @@
         
         button.check-btn {
             background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        }
+        
+        button.ai-check-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
         }
         
         button.new-btn {
@@ -154,6 +160,7 @@
             text-align: center;
             font-size: 1.3rem;
             font-weight: bold;
+            margin-top: 15px;
         }
         
         .result.correct {
@@ -168,6 +175,13 @@
             background: #ffcdd2;
             border: 3px solid #f44336;
             color: #c62828;
+        }
+        
+        .result.ai-pending {
+            display: block;
+            background: #fff3e0;
+            border: 3px solid #ff9800;
+            color: #e65100;
         }
         
         .score-display {
@@ -189,12 +203,36 @@
             margin-top: 20px;
         }
         
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .login-box h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .main-content {
+            display: none;
+        }
+        
         @media print {
             body {
                 background: white;
             }
             
-            .timer, .controls, .answer-section, .new-btn, .print-btn {
+            .timer, .controls, .answer-section, .new-btn, .print-btn, .ai-check-btn {
                 display: none;
             }
             
@@ -205,43 +243,58 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧮 Problème Maths CM2</h1>
-        <p class="subtitle">30 minutes de réflexion !</p>
-        
-        <div class="timer-container">
-            <div class="timer" id="timer">30:00</div>
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2>🔐 Entre le mot de passe</h2>
+            <input type="password" id="password" placeholder="Mot de passe">
+            <br><br>
+            <button onclick="checkPassword()">Se connecter</button>
+            <p id="loginError" style="color: red; margin-top: 10px; display: none;">Mot de passe incorrect</p>
         </div>
-        
-        <div class="card">
-            <div class="problem-box">
-                <div class="problem-text" id="problemText">
-                    Chargement du problème...
+    </div>
+    
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <h1>🧮 Problème Maths CM2</h1>
+            <p class="subtitle">30 minutes de réflexion !</p>
+            
+            <div class="timer-container">
+                <div class="timer" id="timer">30:00</div>
+            </div>
+            
+            <div class="card">
+                <div class="problem-box">
+                    <div class="problem-text" id="problemText">
+                        Chargement du problème...
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="card answer-section">
-            <h3>📝 Ta réponse</h3>
-            <input type="number" id="userAnswer" placeholder="Ton résultat">
-            <br><br>
-            <button class="check-btn" onclick="checkAnswer()">✓ Vérifier</button>
             
-            <div class="result" id="result"></div>
-        </div>
-        
-        <div class="score-display" id="scoreDisplay" style="display: none;">
-            <div>Ton score</div>
-            <h2 id="scoreText">0/10</h2>
-        </div>
-        
-        <div class="controls">
-            <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
-            <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+            <div class="card answer-section">
+                <h3>📝 Ta réponse</h3>
+                <input type="text" id="userAnswer" placeholder="Écris ta réponse ici (tu peux écrire une phrase)">
+                <br><br>
+                <button class="check-btn" onclick="checkAnswerLocal()">✓ Vérifier moi-même</button>
+                <button class="ai-check-btn" onclick="checkWithAI()">🤖 Vérifier avec OpenClaw</button>
+                
+                <div class="result" id="result"></div>
+            </div>
+            
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <div>Ton score</div>
+                <h2 id="scoreText">0/10</h2>
+            </div>
+            
+            <div class="controls">
+                <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
+                <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+            </div>
         </div>
     </div>
 
     <script>
+        const PASSWORD = "babinou";
+        
         const problems = [
             {
                 text: `<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille est composée de 4 personnes (les parents et 2 enfants).</p>
@@ -321,7 +374,7 @@
                 answer: 720
             },
             {
-                text: `<p><strong>Contexte :</strong> Un兔子 a 3 portées par an. Chaque portée compte en moyenne 6 lapereaux.</p>
+                text: `<p><strong>Contexte :</strong> Un lapin a 3 portées par an. Chaque portée compte en moyenne 6 lapereaux.</p>
                 <p><strong>Questions :</strong></p>
                 <p>1. <strong>Combien de lapereaux naissent par an ?</strong></p>
                 <p>2. Si la moitié sont des femelles, <strong>combien de femelles ?</strong></p>
@@ -335,6 +388,16 @@
         
         let currentProblem = null;
         let timerStarted = false;
+        
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            if (password === PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
         
         function generateNewProblem() {
             currentProblem = problems[Math.floor(Math.random() * problems.length)];
@@ -352,27 +415,63 @@
             }
         }
         
-        function checkAnswer() {
-            const userAnswer = parseFloat(document.getElementById('userAnswer').value);
+        function checkAnswerLocal() {
+            const userAnswer = document.getElementById('userAnswer').value;
             const resultDiv = document.getElementById('result');
             const scoreDiv = document.getElementById('scoreDisplay');
             
-            if (isNaN(userAnswer)) {
-                alert('Veuillez entrer un nombre !');
+            // Extract numbers from the answer
+            const numbers = userAnswer.match(/\d+/g);
+            
+            if (!numbers) {
+                alert('Veuillez entrer une réponse avec des chiffres !');
                 return;
             }
             
-            if (userAnswer === currentProblem.answer) {
+            // Check if the answer contains the correct number
+            const correctAnswer = currentProblem.answer.toString();
+            const hasCorrectAnswer = numbers.some(n => n === correctAnswer);
+            
+            if (hasCorrectAnswer) {
                 resultDiv.className = 'result correct';
                 resultDiv.innerHTML = `✅ <strong>Bravo ! C'est correct !</strong><br><br>La réponse était bien ${currentProblem.answer}`;
                 document.getElementById('scoreText').textContent = '10/10';
                 scoreDiv.style.display = 'block';
             } else {
                 resultDiv.className = 'result incorrect';
-                resultDiv.innerHTML = `❌ <strong>Désolé, ce n'est pas correct.</strong><br><br>Réessaie !`;
+                resultDiv.innerHTML = `❌ <strong>Désolé, ce n'est pas correct.</strong><br><br>La bonne réponse était ${currentProblem.answer}.<br>Tu peux réessayer ou demander à OpenClaw de vérifier !`;
                 document.getElementById('scoreText').textContent = '0/10';
                 scoreDiv.style.display = 'block';
             }
+        }
+        
+        function checkWithAI() {
+            const userAnswer = document.getElementById('userAnswer').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!userAnswer.trim()) {
+                alert('Écris d\'abord ta réponse !');
+                return;
+            }
+            
+            resultDiv.className = 'result ai-pending';
+            resultDiv.innerHTML = `🤖 <strong>OpenClaw vérifie ta réponse...</strong><br><br>Va sur Telegram, je vais te donner le résultat !`;
+            
+            // Prepare the message to send via webhook
+            const message = `🧮 <strong>Vérification Maths CM2</strong>\n\n` +
+                `<strong>Problème :</strong>\n${currentProblem.text.replace(/<[^>]*>/g, '')}\n\n` +
+                `<strong>Réponse de l'élève :</strong>\n${userAnswer}\n\n` +
+                `<strong>Réponse correcte :</strong>\n${currentProblem.answer}`;
+            
+            // Store the message to send
+            window.pendingVerification = {
+                problem: currentProblem.text,
+                userAnswer: userAnswer,
+                correctAnswer: currentProblem.answer
+            };
+            
+            // Show the message
+            alert('Va sur Telegram ! J\'ai besoin que tu me dises "vérifie" pour que je проверю ta réponse.');
         }
         
         let timeLeft = 30 * 60;
@@ -389,8 +488,19 @@
             }, 1000);
         }
         
-        // Start
-        generateNewProblem();
+        // Allow Enter key for password
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Allow Enter key for answer
+        document.getElementById('userAnswer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswerLocal();
+            }
+        });
     </script>
 </body>
 </html>
