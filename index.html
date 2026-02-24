@@ -37,6 +37,9 @@
         .login-box h2 { color: #333; margin-bottom: 20px; }
         .main-content { display: none; }
         .hint { background: #fff3e0; border: 2px dashed #ff9800; padding: 12px; border-radius: 8px; margin-top: 12px; font-style: italic; color: #e65100; }
+        .loading { text-align: center; padding: 20px; }
+        .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #ff9800; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -60,7 +63,9 @@
             
             <div class="card">
                 <div class="problem-box">
-                    <div class="problem-text" id="problemText">Chargement...</div>
+                    <div class="problem-text" id="problemText">
+                        <div class="loading"><div class="spinner"></div> L'IA génère un problème...</div>
+                    </div>
                 </div>
             </div>
             
@@ -77,145 +82,17 @@
             </div>
             
             <div class="controls">
-                <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
+                <button class="new-btn" onclick="generateNewProblem()" id="newBtn">🔄 Nouveau problème (IA)</button>
             </div>
         </div>
     </div>
 
     <script>
-        var problems = [
-            {
-                text: `<p><strong>📖 L'histoire :</strong> La famille Martin organise un超级 pique-nique pour l'anniversaire de Emma. Il y a <strong>12 enfants</strong> et <strong>6 adultes</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Chaque enfant mange <strong>2 sandwiches</strong> et chaque adulte en mange <strong>3</strong>.<br>➡️ <strong>Combien de sandwiches sont mangés au total ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Ils apportent <strong>48 cupcakes</strong> à partager équitablement entre les 12 enfants.<br>➡️ <strong>Combien de cupcakes par enfant ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Les cupcakes coûtent <strong>1€50</strong> chacun.<br>➡️ <strong>Combien coûtent les 48 cupcakes ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Ils achètent aussi des jus de fruits à <strong>2€</strong> la bouteille. Il en faut <strong>1 pour 3 personnes</strong>.<br>➡️ <strong>Combien de bouteilles et quel prix total ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Nombre de bouteilles"></div>
-
-<div class="question"><strong>Question 5 :</strong> Chaque enfant reçoit <strong>3 ballons</strong> à <strong>0€50</strong> le ballon.<br>➡️ <strong>Combien coûtent tous les ballons ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse en euros"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong> (le prix des ballons)</div>`,
-                answers: {5: 18}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Tom fait un长 voyage en train pour aller chez son oncle. Le trajet总长 3h30min.</p>
-
-<div class="question"><strong>Question 1 :</strong> Le train part à <strong>9h15</strong>.<br>➡️ <strong>À quelle heure arrive-t-il ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Heure d'arrivée"></div>
-
-<div class="question"><strong>Question 2 :</strong> Le billet adulte coûte <strong>52€</strong> et Tom (enfant) paie demi-tarif.<br>➡️ <strong>Combien payent-ils à eux deux ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Dans le wagon, il y a <strong>8_RANGEES</strong> de 6 sièges chacune. <strong>15 personnes</strong> sont assises.<br>➡️ <strong>Combien de places libres ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Tom achète un livre à <strong>12€</strong> et un jeu à <strong>18€</strong>.<br>➡️ <strong>Combien a-t-il dépensé ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Il avait <strong>100€</strong> dans sa tirelire. Après le voyage et ses achats, il lui reste <strong>15€</strong>.<br>➡️ <strong>Combien a-t-il dépensé au total ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 85}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> La ferme de Monsieur Dubois a des animaux. Il a <strong>45 vaches</strong>, <strong>28 poules</strong> et <strong>12 moutons</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Combien y a-t-il d'animaux en tout ?<br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Chaque vache donne <strong>25 litres</strong> de lait par jour.<br>➡️ <strong>Combien de litres par jour pour toutes les vaches ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Le lait est vendu à <strong>0€80</strong> le litre.<br>➡️ <strong>Combien gagne-t-il par jour avec le lait ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Il vend <strong>8 moutons</strong> à <strong>120€</strong> chacun.<br>➡️ <strong>Combien reçoit-il ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Avec tout cet argent, il achète un tracteur à <strong>4500€</strong>.<br>➡️ <strong>Combien lui manque-t-il s'il a déjà 3000€ ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 1500}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Léa fait des courses au supermarché. Un panier coûte <strong>25€</strong>, un jeu <strong>38€</strong> et un livre <strong>15€</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Elle achète <strong>2 paniers</strong>, <strong>1 jeu</strong> et <strong>3 livres</strong>.<br>➡️ <strong>Combien va-t-elle payer ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Elle donne un billet de <strong>200€</strong>.<br>➡️ <strong>Combien lui rendent-ils ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Elle perd <strong>15€</strong> en rentrant.<br>➡️ <strong>Combien lui reste-t-il ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Avec ce qui lui reste, elle veut acheter des CD à <strong>12€</strong> chacun.<br>➡️ <strong>Combien de CD peut-elle acheter ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Il lui reste <strong>2€</strong> après l'achat des CD.<br>➡️ <strong>Combien de CD a-t-elle achetés ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 3}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Unebibliothèque achète des livres. Ils coûtent <strong>18€</strong> chacun.</p>
-
-<div class="question"><strong>Question 1 :</strong> Ils achètent <strong>25 livres</strong> pour la section enfants.<br>➡️ <strong>Combien ça coûte ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Ils achètent aussi <strong>15 livres</strong> pour les adultes.<br>➡️ <strong>Combien ça coûte ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> <strong>Ensemble</strong>, combien ont-ils dépensé ?<br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Ils reçoivent une réduction de <strong>100€</strong> sur le total.<br>➡️ <strong>Combien payent-ils ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Ils partagent le paiement en <strong>4 mensualités égales</strong>.<br>➡️ <strong>Combien par mensualité ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 110}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Un pizzeria vend des pizzas. Une pizza familiale coûte <strong>16€</strong> et une petite pizza coûte <strong>9€</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Aujourd'hui, ils vendent <strong>18 familiales</strong> et <strong>12 petites</strong>.<br>➡️ <strong>Combien hanno vendu en tout ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Combien ont-ils gagné avec les familiales ?<br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> Et avec les petites ?<br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> <strong>Total</strong> de la journée ?<br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Ils doivent payer <strong>120€</strong> de ingredients et <strong>80€</strong> de loyer.<br>➡️ <strong>Combien leur reste-t-il de bénéfice ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 184}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Max organise une fête. Il invite <strong>15 amis</strong>. Chaque ami apporte <strong>3 gateaux</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Combien de gateaux apportent les amis ?<br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Max ajoute aussi <strong>12 gateaux</strong> de sa grand-mère.<br>➡️ <strong>Combien de gateaux en tout ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> <strong>8 enfants</strong> mangent chacun <strong>3 gateaux</strong>.<br>➡️ <strong>Combien de gateaux sont mangés ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> <strong>7 adultes</strong> mangent chacun <strong>2 gateaux</strong>.<br>➡️ <strong>Combien de gateaux par les adultes ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> <strong>Total mangé = enfants + adultes</strong>. Combien reste-t-il ?<br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 12}
-            },
-            {
-                text: `<p><strong>📖 L'histoire :</strong> Un maraîcher vend au marché. Il apporte <strong>80 kg de carottes</strong> à <strong>2€ le kg</strong>.</p>
-
-<div class="question"><strong>Question 1 :</strong> Combien vaut la récolte de carottes ?<br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 2 :</strong> Il vend aussi <strong>50 kg de navets</strong> à <strong>1€50 le kg</strong>.<br>➡️ <strong>Combien ça fait ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 3 :</strong> <strong>Total</strong> gagné ?<br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 4 :</strong> Il doit payer <strong>35€</strong> pour l'emplacement et <strong>20€</strong> de transport.<br>➡️ <strong>Combien paye-t-il ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
-
-<div class="question"><strong>Question 5 :</strong> Il met le reste sur son compte qui avait <strong>200€</strong>.<br>➡️ <strong>Nouveau solde ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
-
-<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
-                answers: {5: 365}
-            }
-        ];
-        
         var currentProblem = null;
         var timeLeft = 30 * 60;
+        var isGenerating = false;
+        
+        var API_KEY = 'sk-api-J9jnKbH0Tf3bYKawnOvt2ffF1AgE84AVDbB8HtIol85BzQeCqcuCYRjuZ0qb3X1uzusP0TsrYdyjfwl98lhfxlnux6mS_s1XMRIHddPPrUL3OuK0jJG0dgk';
         
         function doLogin() {
             var pwd = document.getElementById('password').value;
@@ -228,11 +105,109 @@
             }
         }
         
-        function generateNewProblem() {
-            currentProblem = problems[Math.floor(Math.random() * problems.length)];
-            document.getElementById('problemText').innerHTML = currentProblem.text;
+        async function generateNewProblem() {
+            if (isGenerating) return;
+            isGenerating = true;
+            
+            document.getElementById('newBtn').disabled = true;
+            document.getElementById('problemText').innerHTML = '<div class="loading"><div class="spinner"></div> L\'IA génère un problème...</div>';
+            document.getElementById('answersContainer').innerHTML = '';
             document.getElementById('result').style.display = 'none';
             document.getElementById('scoreDisplay').style.display = 'none';
+            
+            var prompt = `Génère un problème de maths pour un élève de CM2 (10-11 ans). 
+
+Contexte: Une petite histoire amusante et concrète (anniversaire, voyage, ferme, courses, sport, etc.)
+
+5 questions progressives où chaque réponse sert pour la suivante.
+
+À la fin, donnes la réponse finale de la Question 5.
+
+Format STRICT à suivre:
+CONTEXTE: [ton histoire]
+Question 1: [question]
+Question 2: [question]
+Question 3: [question]
+Question 4: [question]
+Question 5: [la plus difficile]
+RÉPONSE: [chiffre exact de la question 5]`;
+            
+            try {
+                var response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + API_KEY
+                    },
+                    body: JSON.stringify({
+                        model: 'abab6.5s-chat',
+                        messages: [
+                            {role: 'system', content: 'Tu es un professeur de maths pour enfants de CM2. Réponds exactement dans le format demandé.'},
+                            {role: 'user', content: prompt}
+                        ],
+                        temperature: 0.8
+                    })
+                });
+                
+                var data = await response.json();
+                console.log('API Response:', JSON.stringify(data));
+                
+                var aiText = data.choices?.[0]?.message?.content || '';
+                
+                if (!aiText) {
+                    throw new Error('No content from API');
+                }
+                
+                // Parse response
+                var lines = aiText.split('\n');
+                var context = '';
+                var questions = [];
+                var finalAnswer = '';
+                
+                lines.forEach(function(line) {
+                    line = line.trim();
+                    if (line.startsWith('CONTEXTE:') || line.startsWith('Contexte:')) {
+                        context = line.replace(/CONTEXTE:|Contexte:/i, '').trim();
+                    } else if (line.match(/^Question \d+:/)) {
+                        questions.push(line);
+                    } else if (line.startsWith('RÉPONSE:') || line.startsWith('REPONSE:') || line.startsWith('Réponse:')) {
+                        var nums = line.match(/\d+/);
+                        if (nums) finalAnswer = nums[0];
+                    }
+                });
+                
+                if (!finalAnswer && questions.length > 0) {
+                    // Try to find number at end
+                    var lastLine = lines[lines.length - 1];
+                    var nums = lastLine.match(/\d+/);
+                    if (nums) finalAnswer = nums[0];
+                }
+                
+                if (!context || questions.length < 3 || !finalAnswer) {
+                    throw new Error('Invalid format');
+                }
+                
+                // Build HTML
+                var html = '<p><strong>📖 ' + context + '</strong></p>';
+                questions.forEach(function(q, i) {
+                    html += '<div class="question"><strong>' + q + '</strong><br><input type="number" class="answer-input" data-q="' + (i+1) + '" placeholder="Ta réponse"></div>';
+                });
+                html += '<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>';
+                
+                currentProblem = {
+                    text: html,
+                    answer: parseInt(finalAnswer)
+                };
+                
+                document.getElementById('problemText').innerHTML = html;
+                
+            } catch(e) {
+                console.error(e);
+                document.getElementById('problemText').innerHTML = '<p style="color:red">Erreur: ' + e.message + '</p><button onclick="generateNewProblem()">Réessayer</button>';
+            }
+            
+            isGenerating = false;
+            document.getElementById('newBtn').disabled = false;
             timeLeft = 30 * 60;
             startTimer();
         }
@@ -256,29 +231,29 @@
                 return;
             }
             
-            resultDiv.className = 'result';
-            resultDiv.innerHTML = '⏳ Vérification en cours...';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Vérification...';
             
             setTimeout(function() {
                 var numbers = q5Answer.match(/\d+/g);
                 var isCorrect = false;
                 
-                if (numbers && currentProblem && numbers.indexOf(currentProblem.answers[5].toString()) !== -1) {
+                if (numbers && currentProblem && currentProblem.answer && numbers.indexOf(currentProblem.answer.toString()) !== -1) {
                     isCorrect = true;
                 }
                 
                 if (isCorrect) {
                     resultDiv.className = 'result correct';
-                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse à la Question 5 était bien: ' + currentProblem.answers[5];
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse était bien: ' + (currentProblem ? currentProblem.answer : '');
                     document.getElementById('scoreText').textContent = '✅ Excellent !';
                 } else {
                     resultDiv.className = 'result incorrect';
-                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse à la Question 5 était: ' + (currentProblem ? currentProblem.answers[5] : '?') + '<br><br>Mais continue, tu vas y arriver !';
+                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse était: ' + (currentProblem ? currentProblem.answer : '') + '<br><br>Continue, tu vas y arriver !';
                     document.getElementById('scoreText').textContent = '❌ Réessaie';
                 }
                 
                 scoreDiv.style.display = 'block';
-            }, 1000);
+            }, 800);
         }
         
         function startTimer() {
