@@ -14,11 +14,11 @@
         .problem-box { background: #fff8e1; border: 3px solid #ffb300; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
         .problem-text { font-size: 1.2rem; line-height: 2; color: #333; }
         .problem-text p { margin-bottom: 20px; }
-        .question { background: #e3f2fd; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .question { background: #e3f2fd; padding: 20px; border-radius: 15px; margin: 15px 0; border-left: 5px solid #2196f3; }
         .question strong { color: #1565c0; }
+        .question input { width: 100%; padding: 12px; font-size: 1.1rem; border: 3px solid #2196f3; border-radius: 10px; margin-top: 10px; }
         .answer-section { background: #f3e5f5; border: 3px solid #9c27b0; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
         .answer-section h3 { color: #7b1fa2; margin-bottom: 15px; }
-        textarea { width: 100%; padding: 15px; font-size: 1.2rem; border: 3px solid #9c27b0; border-radius: 10px; margin-bottom: 10px; min-height: 120px; font-family: inherit; }
         button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin: 5px; transition: transform 0.2s; }
         button:hover { transform: translateY(-3px); }
         .check-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
@@ -43,7 +43,7 @@
     <div id="loginScreen" class="login-screen">
         <div class="login-box">
             <h2>🔐 Mot de passe</h2>
-            <input type="password" id="password" placeholder="Mot de passe">
+            <input type="password" id="password" placeholder="Entrez le mot de passe">
             <br><br>
             <button onclick="doLogin()">OK</button>
         </div>
@@ -65,10 +65,10 @@
             </div>
             
             <div class="card answer-section">
-                <h3>📝 Écris ta réponse ci-dessous :</h3>
-                <textarea id="userAnswer" placeholder="Écris ta réponse ici... N'oublie pas d'écrire le nombre final !"></textarea>
-                <br><br>
-                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier ma réponse</button>
+                <h3>📝 Réponds à chaque question :</h3>
+                <div id="answersContainer"></div>
+                <br>
+                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier toutes mes réponses</button>
                 <div class="result" id="result"></div>
             </div>
             
@@ -85,132 +85,132 @@
     <script>
         var problems = [
             {
-                text: `<p><strong>📖 L'histoire :</strong> La famille Dupont prépare l'anniversaire de leur fils. Il y a <strong>8 invités</strong> qui viennent à la fête, plus les membres de la famille : le père, la mère et les deux enfants. Cela fait <strong>4 personnes</strong> de la famille.</p>
+                text: `<p><strong>📖 L'histoire :</strong> La famille Dupont prépare l'anniversaire. Il y a <strong>8 invités</strong> + la famille (père, mère, 2 enfants = 4 personnes).</p>
 
-<div class="question"><strong>Question 1 :</strong> Pour faire un gâteau, la recette dit qu'il faut <strong>250g de farine</strong>, <strong>200g de sucre</strong> et <strong>150g de beurre</strong> pour <strong>6 personnes</strong>. Mais ils doivent préparer pour tout le monde ! <br>➡️ <strong>Calcule la quantité de chaque ingrédient nécessaire pour 12 personnes</strong> (car 8 invités + 4 famille = 12 personnes).</div>
+<div class="question"><strong>Question 1 :</strong> Gâteau : 250g farine, 200g sucre, 150g beurre pour 6 personnes.<br>➡️ <strong>Quantité pour 12 personnes ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 2 :</strong> Chaque invité mange <strong>2 parts de gâteau</strong>. Les enfants de la famille mangent aussi chacun 2 parts.<br>➡️ <strong>Combien de parts de gâteau sont mangées au total ?</strong></div>
+<div class="question"><strong>Question 2 :</strong> Chaque invité mange 2 parts.<br>➡️ <strong>Combien de parts au total ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 3 :</strong> Le gâteau coûte <strong>15€</strong> à faire avec tous les ingrédients.<br>➡️ <strong>Combien chaque personne doit-elle payer</strong> pour avoir une part de gâteau ?</div>
+<div class="question"><strong>Question 3 :</strong> Gâteau coûte 15€.<br>➡️ <strong>Prix par personne ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 4 :</strong> Ils achètent des bouteilles de soda à <strong>2€50</strong> chacune. Ils prévoient <strong>1 bouteille pour 3 personnes</strong>.<br>➡️ <strong>Combien vont coûter toutes les bouteilles de soda ?</strong></div>
+<div class="question"><strong>Question 4 :</strong> Soda 2€50, 1 bouteille pour 3 personnes.<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 5 :</strong> Parmi les 8 invités, il y a <strong>5 enfants</strong>. Chaque enfant reçoit <strong>1 balloon</strong> qui coûte <strong>1€</strong>.<br>➡️ <strong>Combien coûtent toutes les balloons ?</strong></div>
+<div class="question"><strong>Question 5 :</strong> 5 enfants invités, 1 balloon à 1€.<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
 
-<div class="hint">💡 <strong>La réponse finale</strong> que tu dois donner est la réponse de la <strong>Question 5</strong> (le prix des balloons).</div>`,
-                answer: 5
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 5}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> Luc veut aller voir sa grand-mère qui habite loin. Il prend le train. Le train <strong>part de la gare à 8h15</strong> du matin et <strong>arrive à destination à 14h45</strong>.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Voyage en train. Départ 8h15, arrivée 14h45. Adulte 45€, enfant demi-tarif.</p>
 
-<div class="question"><strong>Question 1 :</strong> Le voyage commence à 8h15 et finit à 14h45.<br>➡️ <strong>Quelle est la durée totale du voyage</strong> en heures et minutes ?</div>
+<div class="question"><strong>Question 1 :</strong> Durée du voyage ?<br><input type="number" class="answer-input" data-q="1" placeholder="En minutes"></div>
 
-<div class="question"><strong>Question 2 :</strong> Un billet de train coûte <strong>45€</strong> pour un adulte. Luc voyage avec ses <strong>2 enfants</strong>, qui payent demi-tarif (la moitié du prix).<br>➡️ <strong>Combien la famille complète paye-t-elle</strong> pour les billets de train ?</div>
+<div class="question"><strong>Question 2 :</strong> Père + 2 enfants (demi-tarif).<br>➡️ <strong>Prix total ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 3 :</strong> Dans le train, il y a <strong>6 wagons</strong>. Chaque wagon a <strong>50 places assises</strong>. À la première gare, <strong>120 personnes</strong> montent dans le train.<br>➡️ <strong>Combien de places restent libres</strong> dans le train après que tous ces voyageurs sont assis ?</div>
+<div class="question"><strong>Question 3 :</strong> 6 wagons × 50 places. 120 personnes montent.<br>➡️ <strong>Places libres ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 4 :</strong> À la deuxième gare, <strong>35 personnes descendent</strong> du train, mais <strong>28 nouvelles personnes montent</strong>.<br>➡️ <strong>Combien y a-t-il de voyageurs</strong> dans le train après cette deuxième gare ?</div>
+<div class="question"><strong>Question 4 :</strong> 35 descendent, 28 montent.<br>➡️ <strong>Voyageurs dans le train ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 5 :</strong> Pendant le voyage, Luc achète un journal à <strong>3€50</strong> et un café à <strong>2€50</strong>. Il paye avec un <strong>billet de 20€</strong>.<br>➡️ <strong>Combien d'argent le rendent-ils</strong> ?</div>
+<div class="question"><strong>Question 5 :</strong> Journal 3€50, café 2€50. Paye 20€.<br>➡️ <strong>Rendu ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent rendu).</div>`,
-                answer: 14
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 14}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> C'est les soldes dans un grand magasin ! Les prix sont réduits. Un <strong>livre</strong> coûte normalement <strong>25€</strong>, un <strong>jeu vidéo</strong> coûte <strong>60€</strong> et un <strong>jouet</strong> coûte <strong>15€</strong>.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Soldes ! Livre 25€, Jeu 60€, Jouet 15€.</p>
 
-<div class="question"><strong>Question 1 :</strong> Marie veut acheter <strong>3 livres</strong> et <strong>2 jeux vidéo</strong>.<br>➡️ <strong>Combien va-t-elle payer</strong> au prix normal (sans soldes) ?</div>
+<div class="question"><strong>Question 1 :</strong> 3 livres + 2 jeux.<br>➡️ <strong>Prix normal ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 2 :</strong> Il y a des soldes : <strong>-20%</strong> sur tous les livres ! Cela veut dire que le prix est réduit de 20%.<br>➡️ <strong>Combien coûtent les 3 livres</strong> avec la réduction ?</div>
+<div class="question"><strong>Question 2 :</strong> -20% sur les livres.<br>➡️ <strong>Prix soldés des 3 livres ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 3 :</strong> Pierre a <strong>100€</strong> dans sa tirelire. Il veut acheter <strong>4 jouets</strong>.<br>➡️ <strong>Combien lui manque-t-il</strong> pour pouvoir les acheter ?</div>
+<div class="question"><strong>Question 3 :</strong> 100€ + 4 jouets.<br>➡️ <strong>Manque ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 4 :</strong> Grâce aux soldes, Marie économise <strong>15€</strong> sur ses livres.<br>➡️ <strong>Combien a-t-elle payé au total</strong> pour ses 3 livres soldés + ses 2 jeux ?</div>
+<div class="question"><strong>Question 4 :</strong> Marie économise 15€ grâce aux soldes.<br>➡️ <strong>Prix total (livres + jeux) ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Ta réponse"></div>
 
-<div class="question"><strong>Question 5 :</strong> <strong>5 amis</strong> mettent chacun <strong>12€</strong> pour acheter un cadeau d'anniversaire qui coûte <strong>55€</strong>.<br>➡️ <strong>Combien d'argent reste-t-il</strong> après l'achat du cadeau ?</div>
+<div class="question"><strong>Question 5 :</strong> 5 amis × 12€ pour un cadeau de 55€.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="Ta réponse"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent rest</div>`,
-                answer: 5
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 5}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> Un fermier possède <strong>3 fermes</strong> avec des moutons. Dans la première ferme, il a <strong>45 moutons</strong>.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Fermier : Ferme1 = 45 moutons. Ferme2 = double Ferme1. Ferme3 = 30 de moins que Ferme2.</p>
 
-<div class="question"><strong>Question 1 :</strong> La deuxième ferme contient <strong>le double</strong> de la première ferme.<br>➡️ <strong>Combien y a-t-il de moutons</strong> dans la deuxième ferme ?</div>
+<div class="question"><strong>Question 1 :</strong> Ferme2 ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de moutons"></div>
 
-<div class="question"><strong>Question 2 :</strong> La troisième ferme a <strong>30 moutons de moins</strong> que la deuxième ferme.<br>➡️ <strong>Combien y a-t-il de moutons</strong> dans la troisième ferme ?</div>
+<div class="question"><strong>Question 2 :</strong> Ferme3 ?<br><input type="number" class="answer-input" data-q="2" placeholder="Nombre de moutons"></div>
 
-<div class="question"><strong>Question 3 :</strong> Maintenant que tu connais le nombre de moutons dans chaque ferme...<br>➡️ <strong>Combien y a-t-il de moutons au total</strong> dans les 3 fermes ?</div>
+<div class="question"><strong>Question 3 :</strong> Total des 3 fermes ?<br><input type="number" class="answer-input" data-q="3" placeholder="Nombre de moutons"></div>
 
-<div class="question"><strong>Question 4 :</strong> Le fermier vend <strong>60 moutons</strong> à un autre eleveur.<br>➡️ <strong>Combien de moutons lui reste-t-il</strong> ?</div>
+<div class="question"><strong>Question 4 :</strong> Vend 60 moutons.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="Nombre de moutons"></div>
 
-<div class="question"><strong>Question 5 :</strong> Chaque mouton vaut <strong>80€</strong>.<br>➡️ <strong>Combien d'argent</strong> le fermier reçoit-il en vendant ses 60 moutons ?</div>
+<div class="question"><strong>Question 5 :</strong> Mouton = 80€.<br>➡️ <strong>Argent vente 60 moutons ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent reçu).</div>`,
-                answer: 4800
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 4800}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> La classe de CM2 de Mme Martin part en voyage scolaire. Il y a <strong>24 élèves</strong> dans la classe et <strong>3 maîtres/maîtresses</strong> qui accompagnent.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Classe CM2 : 24 élèves + 3 maîtres. Car : 60 places.</p>
 
-<div class="question"><strong>Question 1 :</strong> Le car qui les emmène a <strong>60 places assises</strong>.<br>➡️ <strong>Combien de places restent libres</strong> après que tout le monde est monte ?</div>
+<div class="question"><strong>Question 1 :</strong> Places libres ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de places"></div>
 
-<div class="question"><strong>Question 2 :</strong> Le trajet aller dure <strong>2 heures et 15 minutes</strong>.<br>➡️ <strong>Combien de minutes</strong> dure ce trajet ?</div>
+<div class="question"><strong>Question 2 :</strong> Trajet 2h15.<br>➡️ <strong>En minutes ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Minutes"></div>
 
-<div class="question"><<strong>Question 3 :</strong> Le prix du voyage est de <strong>35€ par élève</strong>.<br>➡️ <strong>Combien paient les 24 élèves</strong> au total ?</div>
+<div class="question"><strong>Question 3 :</strong> 35€ par élève.<br>➡️ <strong>Total 24 élèves ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 4 :</strong> Les maîtres et maîtresses ne payent pas le voyage.<br>➡️ <strong>Quelle est la recette totale</strong> que l'école reçoit des élèves ?</div>
+<div class="question"><strong>Question 4 :</strong> Maîtres gratuit.<br>➡️ <strong>Recette totale ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 5 :</strong> L'école reçoit des aides : une subvention de <strong>200€</strong> et une autre de <strong>150€</strong>.<br>➡️ <strong>Combien d'argent manque-t-il encore</strong> pour payer le voyage de tous les élèves ?</div>
+<div class="question"><strong>Question 5 :</strong> Subventions 200€ + 150€.<br>➡️ <strong>Manque ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent manqu</div>`,
-                answer: 390
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 390}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> Sophie collectionne des cartes Pokemon. Elle en a déjà <strong>125</strong> dans sa boîte.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Sophie : 125 cartes Pokemon.</p>
 
-<div class="question"><strong>Question 1 :</strong> Chaque semaine, elle achète un paquet de <strong>10 cartes</strong>. Elle fait ça pendant <strong>4 semaines</strong>.<br>➡️ <strong>Combien de cartes a-t-elle maintenant</strong> ?</div>
+<div class="question"><strong>Question 1 :</strong> +10 cartes/semaine × 4 semaines.<br>➡️ <strong>Total ?</strong><br><input type="number" class="answer-input" data-q="1" placeholder="Nombre de cartes"></div>
 
-<div class="question"><strong>Question 2 :</strong> Elle decide d'échanger <strong>25 de ses cartes</strong> contre <strong>1 carte très rare</strong>.<br>➡️ <strong>Combien de cartes lui reste-t-il</strong> après cet échange ?</div>
+<div class="question"><strong>Question 2 :</strong> Échange 25 cartes contre 1 rare.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Nombre de cartes"></div>
 
-<div class="question"><strong>Question 3 :</strong> Elle revend certaines de ses cartes doubles. Elle vend <strong>30 cartes</strong> à <strong>2€</strong> chacune.<br>➡️ <strong>Combien d'argent gagne-t-elle</strong> en vendant ces cartes ?</div>
+<div class="question"><strong>Question 3 :</strong> Vend 30 cartes à 2€.<br>➡️ <strong>Argent ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 4 :</strong> Elle veut ranger ses cartes et achète <strong>3 albums</strong> qui coûtent chacun <strong>12€</strong>.<br>➡️ <strong>Combien a-t-elle dépensé</strong> pour les albums ?</div>
+<div class="question"><strong>Question 4 :</strong> Achète 3 albums à 12€.<br>➡️ <strong>Dépense ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 5 :</strong> Après tous ces achats et ventes, il lui reste <strong>155€</strong> dans son porte-feuille.<br>➡️ <strong>Combien d'argent avait-elle au départ</strong> avant de commencer sa collection ?</div>
+<div class="question"><strong>Question 5 :</strong> Il reste 155€.<br>➡️ <strong>Somme de départ ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (la somme de départ).</div>`,
-                answer: 233
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 233}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> Un maraîcher (un farmer de légumes) va vendre sa récolte au marché. Il apporte <strong>100 kg de tomates</strong> qui coûtent <strong>3€ le kilogramme</strong>.</p>
+                text: `<p><strong>📖 L'histoire :</strong> Maraîcher : 100kg tomates à 3€/kg.</p>
 
-<div class="question"><strong>Question 1 :</strong> Calcule la valeur de sa récolte de tomates.<br>➡️ <strong>Combien d'argent</strong> va-t-il gagner rien qu'avec les tomates ?</div>
+<div class="question"><strong>Question 1 :</strong> Valeur tomates ?<br><input type="number" class="answer-input" data-q="1" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 2 :</strong> Il vend aussi <strong>50 kg de pommes de terre</strong> qui coûtent <strong>2€ le kilogramme</strong>.<br>➡️ <strong>Combien vaut</strong> sa récolte de pommes de terre ?</div>
+<div class="question"><strong>Question 2 :</strong> +50kg pommes de terre à 2€/kg.<br>➡️ <strong>Valeur ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 3 :</strong> Additionne l'argent des tomates et des pommes de terre.<br>➡️ <strong>Combien a-t-il gagné au total</strong> au marché ?</div>
+<div class="question"><strong>Question 3 :</strong> Total gagné ?<br><input type="number" class="answer-input" data-q="3" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 4 :</strong> Pour vendre au marché, il doit payer <strong>20€</strong> pour l'emplacement de son stand.<br>➡️ <strong>Combien lui reste-t-il</strong> après avoir payé ?</div>
+<div class="question"><strong>Question 4 :</strong> -20€ emplacement.<br>➡️ <strong>Reste ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 5 :</strong> Il met cet argent sur son compte en banque. Son compte contenait déjà <strong>450€</strong> avant.<br>➡️ <strong>Quel est le nouveau solde</strong> de son compte bancaire ?</div>
+<div class="question"><strong>Question 5 :</strong> Verse sur compte (450€ avant).<br>➡️ <strong>Nouveau solde ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (le nouveau solde).</div>`,
-                answer: 720
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 720}
             },
             {
-                text: `<p><strong>📖 L'histoire :</strong> Un lapin a des petits. Chaque année, la lapine a <strong>3 portées</strong>. Chaque portée compte en moyenne <strong>6 lapereaux</strong> (petits lapins).</p>
+                text: `<p><strong>📖 L'histoire :</strong> Lapin : 3 portées/an, 6 lapereaux/portée.</p>
 
-<div class="question"><strong>Question 1 :</strong> Calcule le nombre de lapereaux qui naissent chaque année.<br>➡️ <strong>Combien de lapereaux</strong> naissent au total en 1 an ?</div>
+<div class="question"><strong>Question 1 :</strong> Lapereaux/an ?<br><input type="number" class="answer-input" data-q="1" placeholder="Nombre"></div>
 
-<div class="question"><strong>Question 2 :</strong> Parmi tous ces lapereaux, <strong>la moitié sont des femelles</strong>.<br>➡️ <strong>Combien de femelles</strong> y a-t-il ?</div>
+<div class="question"><strong>Question 2 :</strong> Moitié femelles.<br>➡️ <strong>Nombre ?</strong><br><input type="number" class="answer-input" data-q="2" placeholder="Nombre"></div>
 
-<div class="question"><strong>Question 3 :</strong> Chaque lapereau mange <strong>200g de nourriture</strong> par jour. Une semaine, c'est <strong>7 jours</strong>.<br>➡️ <strong>Combien de kilogrammes</strong> de nourriture mangent-ils en une semaine ?</div>
+<div class="question"><strong>Question 3 :</strong> 200g/jour × 7 jours.<br>➡️ <strong>Kg/semaine ?</strong><br><input type="number" class="answer-input" data-q="3" placeholder="Kg"></div>
 
-<div class="question"><strong>Question 4 :</strong> La nourriture du lapin coûte <strong>2€ le kilogramme</strong>.<br>➡️ <strong>Combien coûte la nourriture</strong> pour une semaine ?</div>
+<div class="question"><strong>Question 4 :</strong> Nourriture 2€/kg.<br>➡️ <strong>Prix/semaine ?</strong><br><input type="number" class="answer-input" data-q="4" placeholder="En euros"></div>
 
-<div class="question"><strong>Question 5 :</strong> La famille vend <strong>30 lapereaux</strong> à <strong>15€</strong> chacun.<br>➡️ <strong>Combien d'argent</strong> reçoivent-ils en vendant ces lapereaux ?</div>
+<div class="question"><strong>Question 5 :</strong> Vend 30 à 15€.<br>➡️ <strong>Argent ?</strong><br><input type="number" class="answer-input" data-q="5" placeholder="En euros"></div>
 
-<div class="hint">💡 La réponse finale est la réponse de la <strong>Question 5</strong> (l'argent reçu).</div>`,
-                answer: 450
+<div class="hint">💡 La réponse finale est la <strong>Question 5</strong></div>`,
+                answers: {5: 450}
             }
         ];
         
@@ -231,7 +231,6 @@
         function generateNewProblem() {
             currentProblem = problems[Math.floor(Math.random() * problems.length)];
             document.getElementById('problemText').innerHTML = currentProblem.text;
-            document.getElementById('userAnswer').value = '';
             document.getElementById('result').style.display = 'none';
             document.getElementById('scoreDisplay').style.display = 'none';
             timeLeft = 30 * 60;
@@ -239,38 +238,49 @@
         }
         
         function checkWithAI() {
-            var userAnswer = document.getElementById('userAnswer').value;
+            var inputs = document.querySelectorAll('.answer-input');
+            var userAnswer = '';
+            var q5Answer = '';
+            
+            inputs.forEach(function(input) {
+                var q = input.getAttribute('data-q');
+                if (q === '5') {
+                    q5Answer = input.value;
+                }
+                userAnswer += 'Q' + q + ': ' + input.value + '\n';
+            });
+            
             var resultDiv = document.getElementById('result');
             var scoreDiv = document.getElementById('scoreDisplay');
             
-            if (!userAnswer.trim()) {
-                alert('Écris ta réponse d\'abord!');
+            if (!q5Answer.trim()) {
+                alert('Réponds au moins à la Question 5 !');
                 return;
             }
             
             resultDiv.className = 'result thinking';
-            resultDiv.innerHTML = '⏳ L\'IA vérifie ta réponse...';
+            resultDiv.innerHTML = '⏳ Vérification en cours...';
             
             setTimeout(function() {
-                var numbers = userAnswer.match(/-?\d+/g);
+                var numbers = q5Answer.match(/\d+/g);
                 var isCorrect = false;
                 
-                if (numbers && numbers.indexOf(currentProblem.answer.toString()) !== -1) {
+                if (numbers && numbers.indexOf(currentProblem.answers[5].toString()) !== -1) {
                     isCorrect = true;
                 }
                 
                 if (isCorrect) {
                     resultDiv.className = 'result correct';
-                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse attendue était: ' + currentProblem.answer;
-                    document.getElementById('scoreText').textContent = '✅ Correct !';
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong><br><br>La réponse à la Question 5 était bien: ' + currentProblem.answers[5];
+                    document.getElementById('scoreText').textContent = '✅ Excellent !';
                 } else {
                     resultDiv.className = 'result incorrect';
-                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse était: ' + currentProblem.answer + '<br><br>Mais continue, tu vas y arriver !';
-                    document.getElementById('scoreText').textContent = '❌ Essaie encore';
+                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong><br><br>La bonne réponse à la Question 5 était: ' + currentProblem.answers[5] + '<br><br>Mais continue, tu vas y arriver !';
+                    document.getElementById('scoreText').textContent = '❌ Réessaie';
                 }
                 
                 scoreDiv.style.display = 'block';
-            }, 1500);
+            }, 1000);
         }
         
         function startTimer() {
