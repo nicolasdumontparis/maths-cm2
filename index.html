@@ -423,11 +423,13 @@
         
         function checkPassword() {
             const password = document.getElementById('password').value;
+            console.log('Entered:', password, 'Expected:', PASSWORD);
             if (password === PASSWORD) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } else {
                 document.getElementById('loginError').style.display = 'block';
+                alert('Mot de passe incorrect. Le mot de passe est: babinou');
             }
         }
         
