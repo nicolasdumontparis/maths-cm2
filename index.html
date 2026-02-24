@@ -265,7 +265,7 @@
             <h2>🔐 Entre le mot de passe</h2>
             <input type="password" id="password" placeholder="Mot de passe">
             <br><br>
-            <button onclick="checkPassword()">Se connecter</button>
+            <button onclick="if(document.getElementById('password').value=='babinou'){document.getElementById('loginScreen').style.display='none';document.getElementById('mainContent').style.display='block';}else{alert('Le mot de passe est babinou');}">Se connecter</button>
             <p id="loginError" style="color: red; margin-top: 10px; display: none;">Mot de passe incorrect</p>
         </div>
     </div>
@@ -423,13 +423,11 @@
         
         function checkPassword() {
             const password = document.getElementById('password').value;
-            console.log('Entered:', password, 'Expected:', PASSWORD);
-            if (password === PASSWORD) {
+            if (password === "babinou") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } else {
-                document.getElementById('loginError').style.display = 'block';
-                alert('Mot de passe incorrect. Le mot de passe est: babinou');
+                alert('Mot de passe incorrect ! Le mot de passe est: babinou');
             }
         }
         
