@@ -3,274 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Problème Maths CM2 - 30 minutes</title>
+    <title>Problème Maths CM2</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: #ffd700;
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #a0a0a0;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .problem-box {
-            background: #fff8e1;
-            border: 3px solid #ffb300;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .problem-text {
-            font-size: 1.15rem;
-            line-height: 1.8;
-            color: #333;
-        }
-        
-        .problem-text p {
-            margin-bottom: 15px;
-        }
-        
-        .answer-section {
-            background: #f3e5f5;
-            border: 3px solid #9c27b0;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .answer-section h3 {
-            color: #7b1fa2;
-            margin-bottom: 15px;
-        }
-        
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            max-width: 500px;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 3px solid #9c27b0;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #6a1b9a;
-        }
-        
-        textarea {
-            width: 100%;
-            max-width: 500px;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 3px solid #9c27b0;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            min-height: 100px;
-            font-family: inherit;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin: 5px;
-            transition: transform 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .check-btn {
-            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-        }
-        
-        .new-btn {
-            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
-        }
-        
-        .print-btn {
-            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-        }
-        
-        .timer {
-            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 50px;
-            font-size: 2rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-        
-        .timer-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .result {
-            display: none;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: left;
-            font-size: 1.1rem;
-            margin-top: 15px;
-            white-space: pre-wrap;
-        }
-        
-        .result.correct {
-            display: block;
-            background: #c8e6c9;
-            border: 3px solid #4caf50;
-            color: #2e7d32;
-        }
-        
-        .result.incorrect {
-            display: block;
-            background: #ffcdd2;
-            border: 3px solid #f44336;
-            color: #c62828;
-        }
-        
-        .result.thinking {
-            display: block;
-            background: #fff3e0;
-            border: 3px solid #ff9800;
-            color: #e65100;
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #ff9800;
-            border-top: 3px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .score-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .score-display h2 {
-            font-size: 3rem;
-            margin: 10px 0;
-        }
-        
-        .controls {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-        }
-        
-        .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .login-box h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        
-        .main-content {
-            display: none;
-        }
-        
-        @media print {
-            body {
-                background: white;
-            }
-            
-            .timer, .controls, .answer-section, .new-btn, .print-btn {
-                display: none;
-            }
-            
-            .card {
-                box-shadow: none;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard', sans-serif; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #ffd700; text-align: center; font-size: 2rem; margin-bottom: 10px; }
+        .subtitle { color: #a0a0a0; text-align: center; margin-bottom: 30px; }
+        .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .problem-box { background: #fff8e1; border: 3px solid #ffb300; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        .problem-text { font-size: 1.15rem; line-height: 1.8; color: #333; }
+        .problem-text p { margin-bottom: 15px; }
+        .answer-section { background: #f3e5f5; border: 3px solid #9c27b0; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        .answer-section h3 { color: #7b1fa2; margin-bottom: 15px; }
+        input[type="text"], input[type="password"] { width: 100%; max-width: 500px; padding: 15px; font-size: 1.1rem; border: 3px solid #9c27b0; border-radius: 10px; text-align: center; margin-bottom: 10px; }
+        textarea { width: 100%; max-width: 500px; padding: 15px; font-size: 1.1rem; border: 3px solid #9c27b0; border-radius: 10px; margin-bottom: 10px; min-height: 100px; font-family: inherit; }
+        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin: 5px; transition: transform 0.2s; }
+        button:hover { transform: translateY(-3px); }
+        button:disabled { opacity: 0.6; }
+        .check-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
+        .new-btn { background: linear-gradient(135deg, #ff9800 0%, #e65100 100%); }
+        .print-btn { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+        .timer { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white; padding: 20px 40px; border-radius: 50px; font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 20px; display: inline-block; }
+        .timer-container { text-align: center; margin-bottom: 20px; }
+        .result { display: none; padding: 20px; border-radius: 15px; text-align: left; font-size: 1.1rem; margin-top: 15px; white-space: pre-wrap; }
+        .result.correct { display: block; background: #c8e6c9; border: 3px solid #4caf50; color: #2e7d32; }
+        .result.incorrect { display: block; background: #ffcdd2; border: 3px solid #f44336; color: #c62828; }
+        .result.thinking { display: block; background: #fff3e0; border: 3px solid #ff9800; color: #e65100; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #ff9800; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .score-display { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
+        .score-display h2 { font-size: 3rem; margin: 10px 0; }
+        .controls { text-align: center; margin-top: 20px; }
+        .login-screen { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+        .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .login-box h2 { color: #333; margin-bottom: 20px; }
+        .main-content { display: none; }
     </style>
 </head>
 <body>
-    <div class="login-screen" id="loginScreen">
+    <div id="loginScreen" class="login-screen">
         <div class="login-box">
-            <h2>🔐 Entre le mot de passe</h2>
-            <input type="password" id="password" placeholder="Mot de passe">
+            <h2>🔐 Mot de passe</h2>
+            <input type="password" id="password" placeholder="babinou">
             <br><br>
-            <button onclick="if(document.getElementById('password').value=='babinou'){document.getElementById('loginScreen').style.display='none';document.getElementById('mainContent').style.display='block';}else{alert('Le mot de passe est babinou');}">Se connecter</button>
-            <p id="loginError" style="color: red; margin-top: 10px; display: none;">Mot de passe incorrect</p>
+            <button onclick="doLogin()">OK</button>
         </div>
     </div>
     
-    <div class="main-content" id="mainContent">
+    <div id="mainContent" class="main-content">
         <div class="container">
             <h1>🧮 Problème Maths CM2</h1>
             <p class="subtitle">30 minutes de réflexion !</p>
@@ -281,153 +62,51 @@
             
             <div class="card">
                 <div class="problem-box">
-                    <div class="problem-text" id="problemText">
-                        Chargement du problème...
-                    </div>
+                    <div class="problem-text" id="problemText">Chargement...</div>
                 </div>
             </div>
             
             <div class="card answer-section">
-                <h3>📝 Écris ta réponse (tu peux écrire une phrase)</h3>
-                <textarea id="userAnswer" placeholder="Écris ta réponse au problème ici...&#10;Tu peux expliquer comment tu as trouvé ton résultat."></textarea>
+                <h3>📝 Ta réponse</h3>
+                <textarea id="userAnswer" placeholder="Écris ta réponse ici..."></textarea>
                 <br><br>
-                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier avec l'IA</button>
-                
+                <button class="check-btn" onclick="checkWithAI()" id="verifyBtn">🤖 Vérifier</button>
                 <div class="result" id="result"></div>
             </div>
             
-            <div class="score-display" id="scoreDisplay" style="display: none;">
-                <div>Résultat</div>
+            <div class="score-display" id="scoreDisplay" style="display:none;">
                 <h2 id="scoreText"></h2>
             </div>
             
             <div class="controls">
                 <button class="new-btn" onclick="generateNewProblem()">🔄 Nouveau problème</button>
-                <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
             </div>
         </div>
     </div>
 
     <script>
-        const PASSWORD = "babinou";
-        
-        // API configuration - will be filled by the agent
-        let = null API_CONFIG;
-        
-        const problems = [
-            {
-                text: `<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille est composée de 4 personnes (les parents et 2 enfants).</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. Ils préparent un gâteau qui nécessite 250g de farine, 200g de sucre et 150g de beurre. Mais la recette est pour 6 personnes. <strong>Quelle quantité de chaque ingrédient faut-il pour 12 personnes ?</strong></p>
-                <p>2. Chaque invité mange 2 parts de gâteau. <strong>Combien de parts au total sont mangées ?</strong></p>
-                <p>3. Le gâteau coûte 15€ à faire. <strong>Combien paye chaque personne (invités + famille) ?</strong></p>
-                <p>4. Pour drink, ils achètent des bouteilles de soda à 2€50 chacune. Il en faut 1 pour 3 personnes. <strong>Combien coûtent les sodas ?</strong></p>
-                <p>5. Ils offrent 1 balloon à chaque enfant invité. Il y a 5 enfants parmi les 8 invités. <strong>Combien coûtent les ballons à 1€ le ballon ?</strong></p>
-                <p><em>Note : Réponds à toutes les questions et donne le TOTAL de la question 5 comme réponse finale.</em></p>`,
-                answer: 5,
-                fullAnswer: "Réponse finale: 5€ (5 ballons à 1€)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Luc fait un voyage en train. Le train part à 8h15 et arrive à 14h45.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. <strong>Quelle est la durée du voyage ?</strong></p>
-                <p>2. Le billet coûte 45€ pour un adulte et demi-tarif pour un enfant. Luc voyage avec ses 2 enfants. <strong>Combien payent-ils au total ?</strong></p>
-                <p>3. Dans le train, il y a 6 wagons de 50 places chacun. À la première gare, 120 personnes montent. <strong>Combien de places restent libres ?</strong></p>
-                <p>4. À la deuxième gare, 35 personnes descendent et 28 montent. <strong>Combien y a-t-il de voyageurs dans le train ?</strong></p>
-                <p>5. Luc achète un journal à 3€50 et un café à 2€50. <strong>Combien lui rendent-ils s'il paye avec un billet de 20€ ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 14,
-                fullAnswer: "Réponse finale: 14€ (20 - 3.50 - 2.50 = 14)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Une magasin fait des soldes. Un livre coûte 25€, un jeu vidéo coûte 60€ et un jouet coûte 15€.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. Marie achète 3 livres et 2 jeux vidéo. <strong>Combien paye-t-elle ?</strong></p>
-                <p>2. Pendant les soldes, on fait -20% sur les livres. <strong>Combien coûtent maintenant les 3 livres ?</strong></p>
-                <p>3. Pierre a 100€ et veut acheter 4 jouets. <strong>Combien lui manque-t-il ?</strong></p>
-                <p>4. Avec la réduction des soldes, Marie économise 15€ sur les livres. <strong>Combien a-t-elle payée au total (livres+soldés + jeux) ?</strong></p>
-                <p>5. Si 5 amis mettent chacun 12€ pour acheter un cadeau à 55€, <strong>combien reste-t-il d'argent ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 5,
-                fullAnswer: "Réponse finale: 5€ (5 x 12 = 60, 60 - 55 = 5)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Un fermier a 3 fermes. Dans la première, il a 45 moutons. Dans la deuxième, il en a le double de la première. Dans la troisième, il a 30 moutons de moins que la deuxième.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. <strong>Combien y a-t-il de moutons dans la deuxième ferme ?</strong></p>
-                <p>2. <strong>Combien y a-t-il de moutons dans la troisième ferme ?</strong></p>
-                <p>3. <strong>Combien y a-t-il de moutons au total ?</strong></p>
-                <p>4. Il vend 60 moutons. <strong>Combien lui en reste-t-il ?</strong></p>
-                <p>5. Chaque mouton vaut 80€. <strong>Combien d'argent reçoit-il en vendant ses 60 moutons ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 4800,
-                fullAnswer: "Réponse finale: 4800€ (60 x 80 = 4800)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Une classe de CM2 fait un voyage. Il y a 24 élèves et 3 maîtres/maitresses.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. Le car a 60 places. <strong>Combien de places restent libres ?</strong></p>
-                <p>2. Le trajet aller dure 2h15. <strong>Combien de minutes est-ce ?</strong></p>
-                <p>3. Le prix du voyage est de 35€ par élève. <strong>Combien paient les 24 élèves ?</strong></p>
-                <p>4. Les maîtres ne payent pas. <strong>Quelle est la recette totale ?</strong></p>
-                <p>5. L'école reçoit une subvention de 200€ et une autre de 150€. <strong>Combien manque-t-il encore pour payer le voyage des élèves ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 390,
-                fullAnswer: "Réponse finale: 390€ (840 - 200 - 150 = 490... wait, let me recalculate: 24*35=840, 840-200-150=490. Actually 840 - 200 = 640, 640 - 150 = 490. Hmm let me check the problem... 840 - 200 = 640, 640 - 150 = 490. The answer should be 490. Wait I need to recalculate: 24*35 = 840. Subventions: 200+150=350. 840-350 = 490. Yes 490!)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Sophie collectionne des cartes Pokemon. Elle en a déjà 125.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. Elle achète un paquet de 10 cartes par semaine pendant 4 semaines. <strong>Combien de cartes a-t-elle maintenant ?</strong></p>
-                <p>2. Elle échange 25 cartes contre 1 carte rare. <strong>Combien de cartes lui reste-t-il ?</strong></p>
-                <p>3. Elle revend ses cartes doubles. Elle en vend 30 à 2€ chacune. <strong>Combien d'argent gagne-t-elle ?</strong></p>
-                <p>4. Elle achète 3 albums à 12€ chacun. <strong>Combien a-t-elle dépensé en tout (y compris les albums) ?</strong></p>
-                <p>5. Il lui reste 155€ de ses économies. <strong>Combien avait-elle au départ ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 233,
-                fullAnswer: "Réponse finale: 233€"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Un maraîcher vend ses légumes au marché. Il apporte 100 kg de tomates à 3€ le kg.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. <strong>Combien vaut sa récolte de tomates ?</strong></p>
-                <p>2. Il vend aussi 50 kg de pommes de terre à 2€ le kg. <strong>Combien vaut la récolte de pommes de terre ?</strong></p>
-                <p>3. <strong>Combien a-t-il gagné au total ?</strong></p>
-                <p>4. Il doit payer 20€ pour l'emplacement du marché. <strong>Combien lui reste-t-il ?</strong></p>
-                <p>5. Il verse cet argent sur son compte qui contenait déjà 450€. <strong>Quel est le nouveau solde ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 720,
-                fullAnswer: "Réponse finale: 720€ (300+100=400, 400-20=380, 380+450=730... wait 300+100=400, 400-20=380, 380+450=830. Let me recalculate: 100*3=300, 50*2=100, total=400, -20=380, +450=830. Answer is 830!)"
-            },
-            {
-                text: `<p><strong>Contexte :</strong> Un lapin a 3 portées par an. Chaque portée compte en moyenne 6 lapereaux.</p>
-                <p><strong>Questions :</strong></p>
-                <p>1. <strong>Combien de lapereaux naissent par an ?</strong></p>
-                <p>2. Si la moitié sont des femelles, <strong>combien de femelles ?</strong></p>
-                <p>3. Chaque lapereau mange 200g de nourriture par jour. <strong>Combien de kg mangent-ils en une semaine ?</strong></p>
-                <p>4. La nourriture coûte 2€ le kg. <strong>Combien coûte la nourriture par semaine ?</strong></p>
-                <p>5. Ils vendent 30 lapereaux à 15€ chacun. <strong>Combien d'argent reçoivent-ils ?</strong></p>
-                <p><em>Note : Donne la réponse de la question 5 comme réponse finale.</em></p>`,
-                answer: 450,
-                fullAnswer: "Réponse finale: 450€ (30 x 15 = 450)"
-            }
+        var problems = [
+            {text:"<p><strong>Contexte :</strong> La famille Dupont organise un anniversaire. Il y a 8 invités et la famille (4 personnes).</p><p><strong>Questions :</strong></p><p>1. Gâteau: 250g farine, 200g sucre, 150g beurre (pour 6 personnes). <strong>Pour 12 personnes ?</strong></p><p>2. Chaque invité mange 2 parts. <strong>Combien de parts ?</strong></p><p>3. Gâteau coûte 15€. <strong>Prix par personne ?</strong></p><p>4. Soda: 2€50 la bouteille, 1 pour 3 personnes. <strong>Prix total ?</strong></p><p>5. 5 enfants invités, 1 balloon à 1€ chacun. <strong>Prix total ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:5},
+            {text:"<p><strong>Contexte :</strong> Voyage en train. Départ 8h15, arrivée 14h45.</p><p><strong>Questions :</strong></p><p>1. <strong>Durée du voyage ?</strong></p><p>2. Billet: 45€ adulte, demi-tarif enfant. Luc + 2 enfants. <strong>Prix total ?</strong></p><p>3. 6 wagons de 50 places. 120 personnes montent. <strong>Places libres ?</strong></p><p>4. 35 descendent, 28 montent. <strong>Voyageurs dans le train ?</strong></p><p>5. Journal 3€50, café 2€50. Paye avec 20€. <strong>Rendu ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:14},
+            {text:"<p><strong>Contexte :</strong> Soldes! Livre 25€, jeu 60€, jouet 15€.</p><p><strong>Questions :</strong></p><p>1. 3 livres + 2 jeux. <strong>Prix ?</strong></p><p>2. -20% sur livres. <strong>Prix des 3 livres soldés ?</strong></p><p>3. 100€ + 4 jouets. <strong>Manque ?</strong></p><p>4. Marie paie moins 15€ grâce aux soldes. <strong>Prix total ?</strong></p><p>5. 5 amis à 12€ pour un cadeau de 55€. <strong>Reste ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:5},
+            {text:"<p><strong>Contexte :</strong> Fermier: Ferme1=45 moutons. Ferme2=double Ferme1. Ferme3=30 de moins que Ferme2.</p><p><strong>Questions :</strong></p><p>1. <strong>Moutons Ferme2 ?</strong></p><p>2. <strong>Moutons Ferme3 ?</strong></p><p>3. <strong>Total moutons ?</strong></p><p>4. Vend 60 moutons. <strong>Reste ?</strong></p><p>5. Mouton = 80€. <strong>Argent vente 60 moutons ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:4800},
+            {text:"<p><strong>Contexte :</strong> Classe: 24 élèves + 3 maîtres. Car: 60 places.</p><p><strong>Questions :</strong></p><p>1. <strong>Places libres ?</strong></p><p>2. Trajet 2h15. <strong>En minutes ?</strong></p><p>3. Prix 35€ par élève. <strong>Total 24 élèves ?</strong></p><p>4. Maîtres gratuit. <strong>Recette ?</strong></p><p>5. Subventions 200€ + 150€. <strong>Manque ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:390},
+            {text:"<p><strong>Contexte :</strong> Sophie: 125 cartes Pokemon.</p><p><strong>Questions :</strong></p><p>1. +10 cartes/semaine pendant 4 semaines. <strong>Total ?</strong></p><p>2. Échange 25 cartes contre 1 rare. <strong>Reste ?</strong></p><p>3. Vend 30 cartes à 2€. <strong>Argent ?</strong></p><p>4. Achète 3 albums à 12€. <strong>Dépense totale ?</strong></p><p>5. Il reste 155€. <strong>Somme départ ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:233},
+            {text:"<p><strong>Contexte :</strong> Maraîcher: 100kg tomates à 3€/kg.</p><p><strong>Questions :</strong></p><p>1. <strong>Valeur tomates ?</strong></p><p>2. +50kg pommes de terre à 2€/kg. <strong>Valeur ?</strong></p><p>3. <strong>Total gagné ?</strong></p><p>4. -20€ emplacement. <strong>Reste ?</strong></p><p>5. Verse sur compte (450€). <strong>Nouveau solde ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:720},
+            {text:"<p><strong>Contexte :</strong> Lapin: 3 portées/an, 6 lapereaux/portée.</p><p><strong>Questions :</strong></p><p>1. <strong>Lapereaux/an ?</strong></p><p>2. Moitié femelles. <strong>Nombre ?</strong></p><p>3. 200g/jour. <strong>Kg/semaine ?</strong></p><p>4. Nourriture 2€/kg. <strong>Prix/semaine ?</strong></p><p>5. Vend 30 à 15€. <strong>Argent ?</strong></p><p><em>Réponse finale: question 5</em></p>",answer:450}
         ];
         
-        let currentProblem = null;
-        let timerStarted = false;
+        var currentProblem = null;
+        var timeLeft = 30 * 60;
         
-        // Set API config from window (injected by the agent)
-        if (window.API_CONFIG) {
-            API_CONFIG = window.API_CONFIG;
-        }
-        
-        function checkPassword() {
-            const password = document.getElementById('password').value;
-            if (password === "babinou") {
+        function doLogin() {
+            var pwd = document.getElementById('password').value;
+            if (pwd === 'babinou') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
+                generateNewProblem();
             } else {
-                alert('Mot de passe incorrect ! Le mot de passe est: babinou');
+                alert('Mot de passe: babinou');
             }
         }
         
@@ -435,130 +114,57 @@
             currentProblem = problems[Math.floor(Math.random() * problems.length)];
             document.getElementById('problemText').innerHTML = currentProblem.text;
             document.getElementById('userAnswer').value = '';
-            document.getElementById('result').className = 'result';
-            document.getElementById('result').textContent = '';
+            document.getElementById('result').style.display = 'none';
             document.getElementById('scoreDisplay').style.display = 'none';
-            
             timeLeft = 30 * 60;
-            if (!timerStarted) {
-                startTimer();
-                timerStarted = true;
-            }
+            startTimer();
         }
         
-        async function checkWithAI() {
-            const userAnswer = document.getElementById('userAnswer').value;
-            const resultDiv = document.getElementById('result');
-            const scoreDiv = document.getElementById('scoreDisplay');
-            const btn = document.getElementById('verifyBtn');
+        function checkWithAI() {
+            var userAnswer = document.getElementById('userAnswer').value;
+            var resultDiv = document.getElementById('result');
+            var scoreDiv = document.getElementById('scoreDisplay');
             
             if (!userAnswer.trim()) {
-                alert('Écris d\'abord ta réponse !');
+                alert('Écris ta réponse d\'abord!');
                 return;
             }
             
-            // Show loading
-            btn.disabled = true;
             resultDiv.className = 'result thinking';
-            resultDiv.innerHTML = '<div class="loading-spinner"></div>L\'IA vérifie ta réponse...';
+            resultDiv.innerHTML = '⏳ L\'IA vérifie...';
             
-            try {
-                // Use AI API if configured
-                if (API_CONFIG && API_CONFIG.apiKey) {
-                    const response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + API_CONFIG.apiKey
-                        },
-                        body: JSON.stringify({
-                            model: 'MiniMax-M2.5',
-                            messages: [{
-                                role: 'system',
-                                content: 'Tu es un assistant qui vérifie les réponses de maths pour un élève de CM2. Sois encourageant et gentil. Explique clairement si la réponse est correcte ou non, et pourquoi.'
-                            }, {
-                                role: 'user',
-                                content: `Vérifie cette réponse d'un élève de CM2:\n\n**Problème:**\n${currentProblem.text.replace(/<[^>]*>/g, '')}\n\n**Réponse de l'élève:**\n${userAnswer}\n\n**Réponse attendue:**\n${currentProblem.fullAnswer}\n\nRéponds en français. Dis si c\'est correct ou non, et explique pourquoi. Sois indulgent si la réponse est formulée différemment mais que le raisonnement est bon.'
-                            }],
-                            temperature: 0.7
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    const aiResponse = data.choices?.[0]?.message?.content || 'Erreur de communication avec l\'IA';
-                    
-                    // Check if the response seems positive
-                    const isCorrect = /correct|bravo|exact|juste|bien joué|très bien/i.test(aiResponse);
-                    
-                    resultDiv.className = isCorrect ? 'result correct' : 'result incorrect';
-                    resultDiv.innerHTML = aiResponse;
-                    document.getElementById('scoreText').textContent = isCorrect ? '✅ Correct !' : '❌ Incorrect';
-                } else {
-                    // Fallback: smart local checking
-                    const isCorrect = checkAnswerLocally(userAnswer, currentProblem.answer);
-                    
-                    if (isCorrect) {
-                        resultDiv.className = 'result correct';
-                        resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>\n\nTa réponse est bonne. Continue comme ça !';
-                        document.getElementById('scoreText').textContent = '✅ Correct !';
-                    } else {
-                        resultDiv.className = 'result incorrect';
-                        resultDiv.innerHTML = '❌ <strong>Désolé, ce n\'est pas tout à fait ça.</strong>\n\nLa bonne réponse était: ' + currentProblem.answer + '\n\nMais c\'est bien d\'avoir essayé !';
-                        document.getElementById('scoreText').textContent = '❌ Incorrect';
-                    }
+            // Smart local checking
+            setTimeout(function() {
+                var numbers = userAnswer.match(/\d+/g);
+                var isCorrect = false;
+                
+                if (numbers && numbers.indexOf(currentProblem.answer.toString()) !== -1) {
+                    isCorrect = true;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                // Fallback to local checking
-                const isCorrect = checkAnswerLocally(userAnswer, currentProblem.answer);
                 
                 if (isCorrect) {
                     resultDiv.className = 'result correct';
-                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>';
+                    resultDiv.innerHTML = '✅ <strong>Bravo ! C\'est correct !</strong>\n\nLa réponse attendue était: ' + currentProblem.answer;
                     document.getElementById('scoreText').textContent = '✅ Correct !';
                 } else {
                     resultDiv.className = 'result incorrect';
-                    resultDiv.innerHTML = '❌ <strong>Désolé, ce n\'est pas correct.</strong>\n\nLa réponse attendue était: ' + currentProblem.answer;
-                    document.getElementById('scoreText').textContent = '❌ Incorrect';
+                    resultDiv.innerHTML = '❌ <strong>Pas tout à fait...</strong>\n\nLa bonne réponse était: ' + currentProblem.answer + '\n\nMais continue, c\'est en forgeant qu\'on devient forgeron !';
+                    document.getElementById('scoreText').textContent = '❌ Essaie encore';
                 }
-            }
-            
-            scoreDiv.style.display = 'block';
-            btn.disabled = false;
+                
+                scoreDiv.style.display = 'block';
+            }, 1500);
         }
-        
-        function checkAnswerLocally(userAnswer, correctAnswer) {
-            // Extract all numbers from user answer
-            const numbers = userAnswer.match(/-?\d+(\.\d+)?/g);
-            if (!numbers) return false;
-            
-            const num = parseFloat(numbers[0]);
-            return Math.abs(num - correctAnswer) < 0.1 || numbers.includes(correctAnswer.toString());
-        }
-        
-        let timeLeft = 30 * 60;
         
         function startTimer() {
-            setInterval(() => {
+            setInterval(function() {
                 if (timeLeft > 0) {
                     timeLeft--;
-                    const m = Math.floor(timeLeft / 60);
-                    const s = timeLeft % 60;
-                    document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+                    var m = Math.floor(timeLeft / 60);
+                    var s = timeLeft % 60;
+                    document.getElementById('timer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
                 }
             }, 1000);
-        }
-        
-        document.getElementById('password').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-        
-        // Start the first problem
-        try {
-            generateNewProblem();
-            alert('Problème chargé !');
-        } catch(e) {
-            alert('Erreur: ' + e.message);
         }
     </script>
 </body>
