@@ -146,7 +146,7 @@ RÉPONSE FINALE: [Le nombre exact de la Question 5]
                         'Authorization': 'Bearer sk-api-J9jnKbH0Tf3bYKawnOvt2ffF1AgE84AVDbB8HtIol85BzQeCqcuCYRjuZ0qb3X1uzusP0TsrYdyjfwl98lhfxlnux6mS_s1XMRIHddPPrUL3OuK0jJG0dgk'
                     },
                     body: JSON.stringify({
-                        model: 'MiniMax-M2.5',
+                        model: 'abab6.5s-chat',
                         messages: [
                             {role: 'system', content: 'Tu es un professeur de maths pour enfants de CM2. Tu génères des problèmes de maths stimulants et amusants.'},
                             {role: 'user', content: prompt}
@@ -156,6 +156,7 @@ RÉPONSE FINALE: [Le nombre exact de la Question 5]
                 });
                 
                 var data = await response.json();
+                console.log('API Response:', data);
                 var aiText = data.choices?.[0]?.message?.content || '';
                 
                 // Parse the response
@@ -201,7 +202,7 @@ RÉPONSE FINALE: [Le nombre exact de la Question 5]
                 
             } catch(e) {
                 console.error(e);
-                document.getElementById('problemText').innerHTML = '<p style="color:red">Erreur de génération. Cliquez sur "Nouveau problème" pour réessayer.</p>';
+                document.getElementById('problemText').innerHTML = '<p style="color:red">Erreur de connexion. Vérifiez votre connexion internet et réessayez.</p><br><button onclick="generateNewProblem()">Réessayer</button>';
             }
             
             isGenerating = false;
